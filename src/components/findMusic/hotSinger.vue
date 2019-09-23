@@ -8,11 +8,25 @@
     <li @click="$router.push({name: 'newSong'})">最新音乐</li>
   </ul>
     <ul class="singers">
-      <li v-for="item in hotSingerList">
-        <img :src="item.imgUrl" @click="$router.push({name: 'singer', params:{id: item.id}})">
-        <p><span class="name" @click="$router.push({name: 'singer', params:{id: item.id}})"></span></p>
+      <li v-for="item in hotSingers">
+        <img :src="item.imgUrl" @click="$router.push({name: 'singer', params:{id: item.id}})" >
+        <p><span class="name" @click="$router.push({name: 'singer', params:{id: item.id}})">{{item.name}}</span></p>
       </li>
+
     </ul>
+
+    <div class="pagetation_info clearfix" style="margin: 0 auto;">
+      <ul class="pagetation_box">
+               <li class="firstPage" @click=" page.page = 0 "><a href="javascript:;">首页</a></li>
+               <li class="prev" v-show=" page.page > 0 " @click=" page.page-- "><a href="javascript:;">&lt;</a></li>
+               <li v-for="d in page.showPageNum*2" @click=" page.page = d+page.minPage " :class=" page.page ==d+page.minPage? 'active' : '' "><a href="javascript:;">{{d+page.minPage}}</a></li>
+               <li class="next" v-show=" page.page < page.maxPage - 1 " @click=" page.page++ "><a href="javascript:;">&gt;</a></li>
+               <li class="lastPage" @click=" page.page = page.maxPage"><a href="javascript:;">尾页</a></li>
+      </ul>
+<!--      <div class="num_total">-->
+<!--                    共 <span>{{page.total}}</span> 条信息，共 <span>{{page.maxPage}}</span> 页-->
+<!--      </div>-->
+    </div>
   </div>
 </template>
 
@@ -29,52 +43,110 @@ export default {
   name: 'hotSinger',
   data() {
     return {
-      hotSingerList: []
+      hotSingers: [],
+      page : {
+            "total" : 100,
+            "page" : 0,
+            "maxPage" : 5,
+            "minPage":0,
+            "size" : 48,
+            "showPageNum":4,
+        },
     }
   },
 
   methods: {
     hotSingerList() {
-      let params = {
-        limit: 50
+      let getParams = {
+          params: {
+              currentPage:this.page.page,
+              limit: this.page.size,
+          }
       }
-      //修改密码
-      hotSingerList(params).then(res => {
+      //获取歌手信息
+      hotSingerList(getParams).then(res => {
         if (res.code == 0) {
-          res.data.artists.forEach(item => {
-            var singerName = this.getSingerName(item);
+            this.hotSingers = [];
+            let data = JSON.parse(res.data);
+            let singerList = JSON.parse(data.list);
+            singerList.forEach(item => {
+                let singerName =this.getSingerName(item);
+
             let obj = {
-              imgUrl: item.picLocal,
+              imgUrl: "http://127.0.0.1:8080"+item.picLocal,
               id: item.id,
               name: singerName
             }
-            this.hotSingerList.push(obj)
+            this.hotSingers.push(obj)
           });
+
+          //初始化页码
+          this.page.total = data.total;
+          this.page.maxPage = data.maxPage;
+          this.page.page = data.page;
+           this.initPage();
+
         }
       });
     },
     //获取歌手信息
     getSingerName(singer){
         if(singer.fullName!=null&&singer.fullName!=''){
-          return singer.fullName;
+            return this.convertSingerName(singer.fullName);
         }
-        if(siner.englishName!=null&&singer.englishName!=''){
-          return singer.englishName;
+        if(singer.englishName!=null&&singer.englishName!=''){
+           return  this.convertSingerName(singer.englishName)
         }else{
           return "未知";
         }
-    }
-  },
+    },
+    convertSingerName(name){
+        let singerName = name;
+        if(name.indexOf("|")!=-1){
+            singerName = name.split("|")[0];
+        }
+        else if(name.indexOf("、")!=-1){
+            singerName = name.split("、")[0];
+        }
+        if(name.length>15){
+            singerName = name.substring(0,15)+"...";
+        }
+        return singerName
+    } ,
+    //初始化页码信息
+     initPage(){
+         let min = this.page.page-this.page.showPageNum;
+         this.page.minPage = min;
+         if(min < 0){
+             this.page.minPage = 0;
+         }
+         let max = this.page.page+this.page.showPageNum;
+         if(max>this.page.maxPage){
+             this.page.minPage = this.page.maxPage-this.page.showPageNum*2;
+         }
+     }
+    },
   mounted() {
-},
+      this.hotSingerList();
+  },
   computed: {
     theme() {
       return this.$store.state.theme
-    }
-  }
+    },
+  },
+  watch : {
+      "page.page" : function(val){
+          var _this=this;
+          _this.hotSingerList();
+      },
+  },
 }
 </script>
 
 <style lang='scss' scoped>
 @import "../../style/hotSinger.scss";
 </style>
+<style type="text/css">
+  @import "../../style/css/page.css";
+</style>
+

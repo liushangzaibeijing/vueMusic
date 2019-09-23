@@ -65,6 +65,6 @@ export default new Router({
       path: '/day',
       name: 'day',
       component: day
-    }
+    },
   ]
 })

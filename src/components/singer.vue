@@ -7,7 +7,7 @@
       <div class="detail">
         <p>
           <span class="tag">歌手</span>
-          <span class="singer">{{singer}}</span>
+          <span class="singer">{{singerName}}</span>
         </p>
         <p class="alias">{{alias}}</p>
         <p>单曲数:&nbsp;&nbsp;<span class="detail-num">{{musicSize}}</span></p>
@@ -15,21 +15,25 @@
         <p>MV数:&nbsp;&nbsp;<span class="detail-num">{{mvSize}}</span></p>
       </div>
     </div>
-    <div class="nav">
-      <span>专辑</span>
+    <div class="hot-singer-nav">
+        <li  @click="activeNav(index)"  v-for="(item,index) in navs"
+               :class="{active:currentIndex===index}">{{item}}
+        </li>
+<!--        <li id="nav_one" class="active" @click="activeNav($event)">歌曲</li>-->
+<!--        <li id="nav_two" class="noactive" v-bind:class="{on:index=active}" @click="activeNav($event)">专辑</li>-->
     </div>
     <div class="albums">
-      <div class="hot-songs">
+      <div v-show="songVisible" class="hot-songs">
         <div class="album-logo">
           <img src="http://on99ebnkk.bkt.clouddn.com/top50.png">
         </div>
         <div class="albums-content">
           <p class="albums-title">热门50首</p>
           <ul>
-            <li 
-              v-for="(item, index) in hotSongsList.musicData" 
-              v-if="index < 10 || showAll" 
-              @dblclick="$store.commit('setMusicList', hotSongsList);
+            <li
+              v-for="(item, index) in hotSongsList.musicData"
+              v-if="index < 10 || showAll"
+              @dblclick="$store.commit('setMusicList', hotSongsList),
               $store.commit('setPlayIndex', index)"
             >
               <span class="index">
@@ -43,7 +47,7 @@
           <p class="show-all" v-if="!showAll"><span @click="showAll = true">查看全部50首&nbsp;<i class="fa fa-angle-right"></i></span></p>
         </div>
       </div>
-      <div v-for="item in albumList" class="album-songs">
+      <div v-show="!songVisible" v-for="item in albumList" class="album-songs">
         <div class="album-logo">
           <img :src="item.albumImgUrl">
           <p class="publishtime">{{formatDate(item.time)}}</p>
@@ -51,9 +55,9 @@
         <div class="albums-content">
           <p class="albums-title"><span @click="$router.push({name: 'album', params: {id: item.albumId}})">{{item.name}}</span></p>
           <ul>
-            <li 
-              v-for="(songs, index) in item.musicData.musicData" 
-              @dblclick="$store.commit('setMusicList', item.musicData);
+            <li
+              v-for="(songs, index) in item.musicData.musicData"
+              @dblclick="$store.commit('setMusicList', item.musicData),
               $store.commit('setPlayIndex', index)"
             >
               <span class="index">
@@ -76,20 +80,40 @@
  * @exports singer
  * @author oyh(Reusjs)
  */
+import {
+    hotSongsAndRelation,
+    albumList,
+} from "../api/api";
 export default {
   name: 'singer',
   data() {
     return {
+      //资源根路径
+      basePath:"http://127.0.0.1:8080",
+      //热门歌曲
       hotSongsList: {"musicData":[]},
+      //专辑列表
       albumList: [],
+      //歌曲图片
       singerImgUrl: '',
-      singer: '',
+      //歌手名字
+      singerName: '',
+      //歌手id
       singerId: '',
+      //歌手关联关系mid
+      singerMid:'',
+      //歌手别名
       alias: '',
+      //音乐个数
       musicSize: 0,
+      //专辑个数
       albumSize: 0,
+      //mv个数
       mvSize: 0,
-      showAll: false
+      showAll: false,
+      songVisible:true,
+      navs:["歌曲","专辑"],
+      currentIndex:0,
     }
   },
   created() {
@@ -101,54 +125,71 @@ export default {
     }
   },
   methods: {
-    fetchData() {
-      this.hotSongsList = {"musicData":[]}
-      this.albumList = []
-      this.axios.get(`http://localhost:3000/artists?id=${this.$route.params.id}`)
-      .then(res => {
-        this.singerId = res.data.artist && res.data.artist.id
-        this.singer = res.data.artist && res.data.artist.name
-        this.singerImgUrl = res.data.artist && res.data.artist.picUrl
-        this.alias = res.data.artist && res.data.artist.alias[0]
-        this.musicSize = res.data.artist && res.data.artist.musicSize
-        this.albumSize = res.data.artist && res.data.artist.albumSize
-        this.mvSize = res.data.artist && res.data.artist.mvSize
-        res.data.hotSongs.forEach(item => {
-          let obj = {
-            name: item.name,
-            id: item.id,
-            singer: this.singer,
-            singerId: this.singerId,
-            duration: item.dt
-          }
-          this.hotSongsList.musicData.push(obj)
-        })
-      })
-      this.axios.get(`http://localhost:3000/artist/album?id=${this.$route.params.id}`)
-      .then(res => {
-        res.data.hotAlbums.forEach(item => {
-          let obj = {
-            name: item.name,
-            time: item.publishTime,
-            albumId: item.id,
-            albumImgUrl: item.picUrl,
-            musicData: {"musicData": []}
-          }
-          this.axios.get(`http://localhost:3000/album?id=${obj.albumId}`)
-          .then(res => {
-            res.data.songs.forEach(item => {
-              let song = {
-                name: item.name,
-                id: item.id,
-                singer: this.singer,
-                singerId: this.singerId,
-                duration: item.dt
+    fetchData: function () {
+          //歌曲列表
+          this.hotSongsList = {"musicData": []}
+
+          let getParams = {
+              params: {
+                  id :this.$route.params.id
               }
-              obj.musicData.musicData.push(song)
-            })
-          })
-          this.albumList.push(obj)
-        })
+          }
+
+          hotSongsAndRelation(getParams).then(res=>{
+              if (res.code == 0) {
+
+                  let data = JSON.parse(res.data);
+
+                  let  singer = data.singer;
+
+                  this.singerId = singer.id;
+                  this.singerMid = singer.singerMid;
+                  this.singerName = this.getSingerName(singer);
+                  this.singerImgUrl = this.basePath+singer.picLocal;
+
+                  this.alias = this.getAliasName(singer);
+                  this.musicSize = singer.musicSize;
+                  this.albumSize = singer.albumSize;
+                  this.mvSize = singer.mvSize;
+
+                  let  hotSongs =  data.hotSongs;
+                  hotSongs.forEach(item => {
+                      let obj = {
+                          name: item.songName,
+                          id: item.id,
+                          songMid: item.songMid,
+                          singerName: this.singerName,
+                          singerId: this.singerId,
+                          singerMid: this.singerMid,
+                          duration: item.duration
+                      }
+                      this.hotSongsList.musicData.push(obj)
+                  })
+              }
+
+          });
+          //专辑列表
+          this.albumList = [];
+
+          albumList(getParams).then(res=>{
+              if (res.code == 0) {
+                  debugger
+                  let  data =  JSON.parse(res.data);
+                  data.forEach(item => {
+                      let obj = {
+                          name: item.albumName,
+                          time: item.pubTime,
+                          albumId: item.id,
+                          albumMid: item.albumMid,
+                          singerMid:item.singerMid,
+                          albumImgUrl: this.basePath+item.albumPic,
+                          descption:item.descption,
+                          musicData: item.songData,
+
+                      }
+                      this.albumList.push(obj)
+              });
+          }
       })
     },
     formatTime(time) {
@@ -167,6 +208,47 @@ export default {
       month = month > 9 ? month : `0${month}`
       day = day > 9 ? day : `0${day}`
       return `${year}-${month}-${day}`
+    },
+    //获取歌手信息
+    getSingerName(singer){
+        if(singer.fullName!=null&&singer.fullName!=''){
+            return this.convertSingerName(singer.fullName);
+        }
+        if(singer.englishName!=null&&singer.englishName!=''){
+            return  this.convertSingerName(singer.englishName)
+        }else{
+            return "未知";
+        }
+    },
+    convertSingerName(name){
+        let singerName = name;
+        if(name.indexOf("|")!=-1){
+            singerName = name.split("|")[0];
+        }
+        else if(name.indexOf("、")!=-1){
+            singerName = name.split("、")[0];
+        }
+        if(name.length>15){
+            singerName = name.substring(0,15)+"...";
+        }
+
+        return singerName
+    } ,
+    getAliasName(singer){
+        if(singer.shortName!=null&&singer.shortName!=''){
+            return this.convertSingerName(singer.shortName);
+        }
+        return this.singerName;
+    },
+    //nav 切换
+    activeNav(index){
+      this.currentIndex = index;
+      if(index==0){
+         this.songVisible = true
+      }
+      if(index==1){
+         this.songVisible = false;
+      }
     }
   },
   watch: {
@@ -175,7 +257,9 @@ export default {
         this.fetchData()
       }
     }
-  }
+  },
+  mounted() {
+    },
 }
 </script>
 

@@ -44,7 +44,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/utopia': {
-        target: 'http://localhost:8076',
+        target: 'http://localhost:9000',
         changeOrigin: true,
         pathRewrite: {
           '^/utopia': '/utopia'
