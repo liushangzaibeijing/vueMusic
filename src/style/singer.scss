@@ -118,11 +118,22 @@
       font-size: 12px;
       color: #888;
     }
-    .hot-songs,
-    .album-songs {
+    .hot-songs{
       display: flex;
       flex-flow: row nowrap;
       margin-bottom: 5rem;
+    }
+    .albums{
+      display: flex;
+      flex-flow: row wrap;
+      width: 100rem;
+      margin: 0 auto;
+      list-style: none;
+      li {
+        position: relative;
+        height: 20rem;
+        margin: 2rem .7rem 0 .7rem;
+      }
     }
     .albums-content {
       margin-left: 6rem;
@@ -196,6 +207,7 @@
   .singer-container {
     .albums {
       .album-logo {
+        display: inline;
         img {
           width: 16rem;
           height: 16rem;

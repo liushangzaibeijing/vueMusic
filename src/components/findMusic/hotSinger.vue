@@ -23,9 +23,6 @@
                <li class="next" v-show=" page.page < page.maxPage - 1 " @click=" page.page++ "><a href="javascript:;">&gt;</a></li>
                <li class="lastPage" @click=" page.page = page.maxPage"><a href="javascript:;">尾页</a></li>
       </ul>
-<!--      <div class="num_total">-->
-<!--                    共 <span>{{page.total}}</span> 条信息，共 <span>{{page.maxPage}}</span> 页-->
-<!--      </div>-->
     </div>
   </div>
 </template>
@@ -84,8 +81,7 @@ export default {
           this.page.total = data.total;
           this.page.maxPage = data.maxPage;
           this.page.page = data.page;
-           this.initPage();
-
+          this.initPage();
         }
       });
     },

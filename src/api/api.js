@@ -14,6 +14,10 @@ export const hotSingerList = params => axios.get(base+"/music/singer/hotSingerLi
 //获取歌手的热门歌曲 以及相关信息
 export const hotSongsAndRelation = params => axios.get(base+"/music/singer/hotSongsAndRelation",params).then(res=>res.data).catch(err => {errmsg(err.response.status)});
 
+//获取歌曲信息
+export const getSongList = params => axios.get(base+"/music/song/songList",params).then(res=>res.data).catch(err => {errmsg(err.response.status)});
+
+
 //获取歌手对应的专辑信息 使用分页
 export const albumList = params => axios.get(base+"/music/album/albumList",params).then(res=>res.data).catch(err => {errmsg(err.response.status)});
 

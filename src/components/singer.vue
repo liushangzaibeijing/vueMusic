@@ -28,7 +28,7 @@
           <img src="http://on99ebnkk.bkt.clouddn.com/top50.png">
         </div>
         <div class="albums-content">
-          <p class="albums-title">热门50首</p>
+          <p class="albums-title">全部歌曲</p>
           <ul>
             <li
               v-for="(item, index) in hotSongsList.musicData"
@@ -44,29 +44,35 @@
               <span class="time">{{formatTime(~~ item.duration)}}</span>
             </li>
           </ul>
-          <p class="show-all" v-if="!showAll"><span @click="showAll = true">查看全部50首&nbsp;<i class="fa fa-angle-right"></i></span></p>
+          <div class="pagetation_info clearfix" style="margin: 0 auto;">
+            <ul class="pagetation_box">
+                     <li class="firstPage" @click=" songPage.page = 0 "><a href="javascript:;">首页</a></li>
+                         <li class="prev" v-show=" songPage.page > 0 " @click=" songPage.page-- "><a href="javascript:;">&lt;</a></li>
+                         <li v-for="d in songPage.showPageNum*2" @click=" songPage.page = d+songPage.minPage " :class=" songPage.page ==d+songPage.minPage? 'active' : '' "><a href="javascript:;">{{d+songPage.minPage}}</a></li>
+                         <li class="next" v-show=" songPage.page < songPage.maxPage - 1 " @click=" songPage.page++ "><a href="javascript:;">&gt;</a></li>
+                         <li class="lastPage" @click=" songPage.page = songPage.maxPage"><a href="javascript:;">尾页</a></li>
+            </ul>
+          </div>
         </div>
+
       </div>
-      <div v-show="!songVisible" v-for="item in albumList" class="album-songs">
-        <div class="album-logo">
-          <img :src="item.albumImgUrl">
-          <p class="publishtime">{{formatDate(item.time)}}</p>
-        </div>
-        <div class="albums-content">
-          <p class="albums-title"><span @click="$router.push({name: 'album', params: {id: item.albumId}})">{{item.name}}</span></p>
-          <ul>
-            <li
-              v-for="(songs, index) in item.musicData.musicData"
-              @dblclick="$store.commit('setMusicList', item.musicData),
-              $store.commit('setPlayIndex', index)"
-            >
-              <span class="index">
-                {{index + 1 > 9 ? index + 1 : `0${index + 1}`}}
-              </span>
-              <span><i class="fa fa-heart-o fa-fw"></i><i class="fa fa-download fa-fw"></i></span>
-              <span class="song-name">{{songs.name}}</span>
-              <span class="time">{{formatTime(~~ songs.duration)}}</span>
-            </li>
+      <div v-show="!songVisible">
+        <ul class="albums">
+         <li v-for="item in albumList">
+          <div class="album-logo">
+            <img :src="item.albumImgUrl">
+            <span class="albums-title" >{{item.name}}</span> &nbsp;&nbsp;&nbsp;
+            <span class="publishtime">{{formatDate(item.time)}}</span>
+          </div>
+        </li>
+        </ul>
+        <div class="pagetation_info clearfix" style="margin: 0 auto;">
+          <ul class="pagetation_box">
+                   <li class="firstPage" @click=" albumPage.page = 0 "><a href="javascript:;">首页</a></li>
+                       <li class="prev" v-show=" albumPage.page > 0 " @click=" albumPage.page-- "><a href="javascript:;">&lt;</a></li>
+                       <li v-for="d in albumPage.showPageNum*2" @click=" albumPage.page = d+albumPage.minPage " :class=" albumPage.page ==d+albumPage.minPage? 'active' : '' "><a href="javascript:;">{{d+albumPage.minPage}}</a></li>
+                       <li class="next" v-show=" albumPage.page < songPage.maxPage - 1 " @click=" songPage.page++ "><a href="javascript:;">&gt;</a></li>
+                       <li class="lastPage" @click=" albumPage.page = albumPage.maxPage"><a href="javascript:;">尾页</a></li>
           </ul>
         </div>
       </div>
@@ -83,6 +89,8 @@
 import {
     hotSongsAndRelation,
     albumList,
+    getSongList,
+
 } from "../api/api";
 export default {
   name: 'singer',
@@ -114,6 +122,22 @@ export default {
       songVisible:true,
       navs:["歌曲","专辑"],
       currentIndex:0,
+      songPage : {
+          "total" : 100,
+          "page" : 0,
+          "maxPage" : 5,
+          "minPage":0,
+          "size" : 25,
+          "showPageNum":4,
+      },
+      albumPage : {
+          "total" : 100,
+          "page" : 0,
+          "maxPage" : 5,
+          "minPage":0,
+          "size" : 20,
+          "showPageNum":4,
+      },
     }
   },
   created() {
@@ -126,74 +150,104 @@ export default {
   },
   methods: {
     fetchData: function () {
-          //歌曲列表
-          this.hotSongsList = {"musicData": []}
-
-          let getParams = {
-              params: {
-                  id :this.$route.params.id
-              }
-          }
-
-          hotSongsAndRelation(getParams).then(res=>{
-              if (res.code == 0) {
-
-                  let data = JSON.parse(res.data);
-
-                  let  singer = data.singer;
-
-                  this.singerId = singer.id;
-                  this.singerMid = singer.singerMid;
-                  this.singerName = this.getSingerName(singer);
-                  this.singerImgUrl = this.basePath+singer.picLocal;
-
-                  this.alias = this.getAliasName(singer);
-                  this.musicSize = singer.musicSize;
-                  this.albumSize = singer.albumSize;
-                  this.mvSize = singer.mvSize;
-
-                  let  hotSongs =  data.hotSongs;
-                  hotSongs.forEach(item => {
-                      let obj = {
-                          name: item.songName,
-                          id: item.id,
-                          songMid: item.songMid,
-                          singerName: this.singerName,
-                          singerId: this.singerId,
-                          singerMid: this.singerMid,
-                          duration: item.duration
-                      }
-                      this.hotSongsList.musicData.push(obj)
-                  })
-              }
-
-          });
-          //专辑列表
-          this.albumList = [];
-
-          albumList(getParams).then(res=>{
-              if (res.code == 0) {
-                  debugger
-                  let  data =  JSON.parse(res.data);
-                  data.forEach(item => {
-                      let obj = {
-                          name: item.albumName,
-                          time: item.pubTime,
-                          albumId: item.id,
-                          albumMid: item.albumMid,
-                          singerMid:item.singerMid,
-                          albumImgUrl: this.basePath+item.albumPic,
-                          descption:item.descption,
-                          musicData: item.songData,
-
-                      }
-                      this.albumList.push(obj)
-              });
-          }
-      })
+        this.getSingerInfo();
+        this.getSongList();
     },
+    getAlbumList(){
+        let getParams = {
+            params: {
+                id :this.$route.params.id,
+                currentPage:this.albumPage.page,
+                pageSize:this.albumPage.size
+            }
+        }
+        //专辑列表
+        this.albumList = [];
+
+        albumList(getParams).then(res=>{
+            if (res.code == 0) {
+                debugger
+                let  data =  JSON.parse(res.data);
+                let albumList = JSON.parse(data.list);
+                albumList.forEach(item => {
+                    let obj = {
+                        name: item.albumName,
+                        time: item.pubTime,
+                        albumId: item.id,
+                        albumMid: item.albumMid,
+                        singerMid:item.singerMid,
+                        albumImgUrl: this.basePath+item.albumPic,
+                        descption:item.descption,
+                    }
+                    this.albumList.push(obj)
+                });
+                //初始化页码
+                this.albumPage.total = data.total;
+                this.albumPage.maxPage = data.maxPage;
+                this.albumPage.page = data.page;
+                this.initPage(2);
+            }
+        })
+    },
+    getSingerInfo(){
+        //歌曲列表
+        this.hotSongsList = {"musicData": []}
+        let getParams = {
+            params: {
+                id :this.$route.params.id,
+            }
+        }
+        hotSongsAndRelation(getParams).then(res=>{
+            if (res.code == 0) {
+                let singer = JSON.parse(res.data);
+                this.singerId = singer.id;
+                this.singerMid = singer.singerMid;
+                this.singerName = this.getSingerName(singer);
+                this.singerImgUrl = this.basePath+singer.picLocal;
+                this.alias = this.getAliasName(singer);
+                this.musicSize = singer.musicSize;
+                this.albumSize = singer.albumSize;
+                this.mvSize = singer.mvSize;
+            }
+        });
+    },
+    getSongList(){
+        //歌曲列表
+        this.hotSongsList = {"musicData": []}
+        let getParams = {
+            params: {
+                id :this.$route.params.id,
+                currentPage:this.songPage.page,
+                pageSize:this.songPage.size
+            }
+        }
+        getSongList(getParams).then(res=>{
+            if (res.code == 0) {
+
+                let data = JSON.parse(res.data);
+                let songList = JSON.parse(data.list);
+
+                songList.forEach(item => {
+                    let obj = {
+                        name: item.songName,
+                        id: item.id,
+                        songMid: item.songMid,
+                        singerName: this.singerName,
+                        singerId: this.singerId,
+                        singerMid: this.singerMid,
+                        duration: item.duration
+                    }
+                    this.hotSongsList.musicData.push(obj)
+                })
+                //初始化页码
+                this.songPage.total = data.total;
+                this.songPage.maxPage = data.maxPage;
+                this.songPage.page = data.page;
+                this.initPage(1);
+            }
+        });
+      },
     formatTime(time) {
-      time = Math.floor(time / 1000)
       let second = time % 60
       let min = (time - second) / 60
       second = second > 9 ? second : `0${second}`
@@ -245,10 +299,38 @@ export default {
       this.currentIndex = index;
       if(index==0){
          this.songVisible = true
+          this.getSongList();
       }
       if(index==1){
          this.songVisible = false;
+          this.getAlbumList()
       }
+    },
+    //初始化页码信息
+    initPage(type){
+        if(type==1){
+          let min = this.songPage.page-this.songPage.showPageNum;
+          this.songPage.minPage = min;
+          if(min < 0){
+              this.songPage.minPage = 0;
+          }
+          let max = this.songPage.page+this.songPage.showPageNum;
+          if(max>this.songPage.maxPage){
+              this.songPage.minPage = this.songPage.maxPage-this.songPage.showPageNum*2;
+          }
+        }
+        if(type==2){
+            let min = this.albumPage.page-this.albumPage.showPageNum;
+            this.albumPage.minPage = min;
+            if(min < 0){
+                this.albumPage.minPage = 0;
+            }
+            let max = this.albumPage.page+this.albumPage.showPageNum;
+            if(max>this.albumPage.maxPage){
+                this.albumPage.minPage = this.albumPage.maxPage-this.albumPage.showPageNum*2;
+            }
+        }
+
     }
   },
   watch: {
@@ -256,7 +338,16 @@ export default {
       handler(to, from) {
         this.fetchData()
       }
-    }
+    },
+
+    "songPage.page" : function(val){
+        var _this=this;
+        _this.getSongList();
+    },
+    "albumPage.page" : function(val){
+        var _this=this;
+        _this.getAlbumList();
+    },
   },
   mounted() {
     },
