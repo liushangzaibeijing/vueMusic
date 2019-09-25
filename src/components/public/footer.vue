@@ -1,79 +1,90 @@
 <template>
   <div class="music-footer" ref="footer" :id="theme">
+    <!-- vue的播放组件 -->
     <audio autoplay controls
       :src="url"
       v-show="false"
       ref="audio"
       @ended="next(false)"
-      @timeupdate="timeupdate"></audio>
-      <div class="footer-left">
-        <span class="back" @click="prev">
-          <i class="fa fa-step-backward"></i>
-        </span>
-        <span class="play-pause" @click="playOrPause">
-          <i class="fa" :class="isPlaying ? 'fa-pause' : 'fa-play'"></i>
-        </span>
-        <span class="next" @click="next(true)">
-          <i class="fa fa-step-forward"></i>
+      @timeupdate="timeupdate">
+    </audio>
+    <!-- 播放的相关按钮 前 播放中  后 -->
+    <div class="footer-left">
+      <span class="back" @click="prev">
+        <i class="fa fa-step-backward"></i>
+      </span>
+      <span class="play-pause" @click="playOrPause">
+        <i class="fa" :class="isPlaying ? 'fa-pause' : 'fa-play'"></i>
+      </span>
+      <span class="next" @click="next(true)">
+        <i class="fa fa-step-forward"></i>
+      </span>
+    </div>
+    <!-- 当前歌曲正在播放的当前时间 -->
+    <span class="time">{{curTime}}</span>
+    <!-- 播放拖动滑块 -->
+    <v-slider
+      :value="curTimeNum"
+      :totalVal="tolTimeNum"
+      :width="width"
+      @skip="skip"
+      @move="move"></v-slider>
+    <!-- 歌曲总时间 -->
+    <span class="time">{{tolTime}}</span>
+    <!-- 音量设置 -->
+    <span class="value" @click="volumeOff">
+      <i class="fa fa-fw"  :class="{'fa-volume-up': !isVolumeOff, 'fa-volume-off': isVolumeOff}"></i>
+    </span>
+    <v-slider
+      :value="volume"
+      :totalVal="1"
+      :width="100"
+      :style="{'margin-left': '5px'}"
+      @skip="skipVolume"
+      @move="moveVolume"></v-slider>
+    <!-- 播放模式  -->
+    <span class="play-state"
+      @click="playStateIndex = playStateIndex === 3 ? 0 : ++playStateIndex">
+      <i class="fa fa-fw" :class="playState"></i>
+    </span>
+    <!-- 播放列表的歌曲数量 -->
+    <span class="list-num" @click="showDialog = !showDialog">
+      <span class="list-icon"><i class="fa fa-file-text-o fa-fw"></i></span>
+      {{musicList && musicList.length}}
+    </span>
+    <!-- 播放列表详细清单 -->
+    <div class="list-dialog" v-if="showDialog">
+      <div class="list-head">
+        <span>播放列表</span>
+        <span @click="showDialog = false"><i class="fa fa-close"></i></span>
+       </div>
+      <div class="info">
+        <span>总{{musicList && musicList.length}}首</span>
+        <span
+          @click="$store.commit('clear');
+                  url = '';
+                  $store.commit('pause');
+                  $store.commit('setShowPlay', false)
+              ">
+          <i class="fa fa-trash-o"></i>清空
         </span>
       </div>
-      <span class="time">{{curTime}}</span>
-      <v-slider
-        :value="curTimeNum"
-        :totalVal="tolTimeNum"
-        :width="width"
-        @skip="skip"
-        @move="move"></v-slider>
-      <span class="time">{{tolTime}}</span>
-      <span class="value" @click="volumeOff"><i class="fa fa-fw"
-        :class="{'fa-volume-up': !isVolumeOff, 'fa-volume-off': isVolumeOff}"></i></span>
-      <v-slider
-        :value="volume"
-        :totalVal="1"
-        :width="100"
-        :style="{'margin-left': '5px'}"
-        @skip="skipVolume"
-        @move="moveVolume"></v-slider>
-      <span class="play-state"
-        @click="playStateIndex = playStateIndex === 3 ? 0 : ++playStateIndex"
-      >
-        <i class="fa fa-fw" :class="playState"></i>
-      </span>
-      <span class="list-num" @click="showDialog = !showDialog">
-        <span class="list-icon"><i class="fa fa-file-text-o fa-fw"></i></span>
-        {{musicList && musicList.length}}
-      </span>
-      <div class="list-dialog" v-if="showDialog">
-        <div class="list-head">
-          <span>播放列表</span>
-          <span @click="showDialog = false"><i class="fa fa-close"></i></span>
-        </div>
-        <div class="info">
-          <span>总{{musicList && musicList.length}}首</span>
-          <span 
-            @click="$store.commit('clear');
-                    url = '';
-                    $store.commit('pause');
-                    $store.commit('setShowPlay', false)
-                ">
-            <i class="fa fa-trash-o"></i>清空
-          </span>
-        </div>
-        <ul v-if="musicList && musicList.length !== 0">
-          <li v-for="(item, index) in musicList" @dblclick="changeMusic(index)">
-            <span class="name">{{item.name}}</span>
-            <span class="singer" 
-              @click="$router.push({name: 'singer', params:{id: item.singerId}});
-              $store.commit('setShowPlay', false)"
-            >{{item.singer}}</span>
-            <span class="duration">{{formatDuration(~~ item.duration)}}</span>
-          </li>
-        </ul>
-        <div class="no-song" v-else>
-          <p>你还没有添加任何歌曲!</p>
-          <p>去首页<span @click="$router.push({path:'/'})">发现音乐</span></p>
-        </div>
+      <!-- 播放列表的歌曲列表 -->
+      <ul v-if="musicList && musicList.length !== 0">
+        <li v-for="(item, index) in musicList" @dblclick="changeMusic(index)">
+          <span class="name">{{item.name}}</span>
+          <span class="singer"
+            @click="$router.push({name: 'singer', params:{id: item.singerId}});
+            $store.commit('setShowPlay', false)"
+          >{{item.singer}}</span>
+          <span class="duration">{{formatDuration(~~ item.duration)}}</span>
+        </li>
+      </ul>
+      <div class="no-song" v-else>
+        <p>你还没有添加任何歌曲!</p>
+        <p>去首页<span @click="$router.push({path:'/'})">发现音乐</span></p>
       </div>
+    </div>
   </div>
 </template>
 
@@ -92,8 +103,11 @@ import storage from '../../storage.js'
     },
     data() {
       return {
+        //播放地址
         url: '',
+        //当前播放时间
         curTime: '00:00',
+        //总播放时间
         tolTime: '00:00',
         curTimeNum: 0,
         tolTimeNum: 0,
@@ -110,7 +124,7 @@ import storage from '../../storage.js'
     created() {
       if (storage.getMusic() != null) {
         this.$store.commit('setMusicList', storage.getMusic())
-        if (this.musicList.length < 1) return 
+        if (this.musicList.length < 1) return
         this.axios.get(`http://localhost:3000/music/url?id=${this.musicList[0].id}`)
           .then(response => {
             this.url = response.data.data[0].url
@@ -125,7 +139,7 @@ import storage from '../../storage.js'
             this.url = response.data.data[0].url
             this.$store.commit('setPlayIndex', 0)
           })
-        }) 
+        })
       }
     },
     mounted() {
@@ -157,28 +171,33 @@ import storage from '../../storage.js'
       this.width = document.body.clientWidth < 1450 ? 750 : 950
     },
     computed: {
+      //播放模式
       playState() {
         let obj = {
-          loop:    'fa-rotate-right',
-          loopOne: 'fa-refresh',
-          random:  'fa-random',
-          order:   'fa-reorder'
+          loop:    'fa-rotate-right',   //循环播放
+          loopOne: 'fa-refresh',        //单曲循环
+          random:  'fa-random',         //随机播放
+          order:   'fa-reorder'         //顺序播放
         }
         let {[this.playStateAll[this.playStateIndex]]: bg} = obj
         return bg
       },
+      //获取歌曲信息
       musicList() {
         return this.$store.state.musicList.musicData
       },
+      //获取播放状态
       isPlaying() {
         return this.$store.state.isPlaying
       },
+      //当前播放索引
       nowPlayIndex() {
         return this.$store.state.nowPlayIndex
       },
       showMiniAudio() {
         return this.musicList.length > 0
       },
+      //获取播放索引的id
       id() {
         return this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex] && this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].id
       },
@@ -195,7 +214,6 @@ import storage from '../../storage.js'
         return `${min}:${second}`
       },
       formatDuration(time) {
-        time = Math.floor(time / 1000)
         let second = time % 60
         let min = (time - second) / 60
         second = second > 9 ? second : `0${second}`
@@ -211,7 +229,7 @@ import storage from '../../storage.js'
           this.$refs.audio.currentTime = 0
           this.curTimeNum = 0
           return
-        } 
+        }
         this.$refs.audio.currentTime = skipWidth / this.width * this.tolTimeNum
         this.curTimeNum = this.$refs.audio.currentTime
       },
@@ -221,7 +239,7 @@ import storage from '../../storage.js'
           this.volume = 0
           this.saveVolume = 0
           this.isVolumeOff = true
-          return 
+          return
         }
         this.$refs.audio.volume = skipWidth / 100 * 1 > 0 ? skipWidth / 100 * 1 : 0
         this.volume = this.$refs.audio.volume
@@ -243,7 +261,7 @@ import storage from '../../storage.js'
           this.$refs.audio.currentTime = 0
           this.curTimeNum = 0
           return
-        } 
+        }
         this.$refs.audio.currentTime = value / this.width * this.tolTimeNum
         this.curTimeNum = this.$refs.audio.currentTime
       },
@@ -254,18 +272,18 @@ import storage from '../../storage.js'
           this.saveVolume = this.volume
           this.isVolumeOff = true
           return
-        } 
+        }
         this.$refs.audio.volume = value / 100 * 1 > 0 ? value / 100 * 1 : 0
         this.volume = this.$refs.audio.volume
         this.saveVolume = this.volume
         this.isVolumeOff = false
       },
       next(flag) {
-        if (this.musicList.length === 0) return 
+        if (this.musicList.length === 0) return
         if (this.playStateIndex === 0) {
           this.nowPlayIndex === this.musicList.length - 1 ? this.$store.commit('setPlayIndex', 0) : this.$store.commit('setPlayIndex', ++this.nowPlayIndex)
           this.getURL(this.musicList[this.nowPlayIndex].id)
-          return 
+          return
         }
         if (this.playStateIndex === 1) {
           if (!flag) return this.$refs.audio.load()
@@ -283,11 +301,11 @@ import storage from '../../storage.js'
           }
           this.nowPlayIndex === this.musicList.length - 1 ? this.$store.commit('setPlayIndex', 0) : this.$store.commit('setPlayIndex', ++this.nowPlayIndex)
           this.getURL(this.musicList[this.nowPlayIndex].id)
-          return 
+          return
         }
       },
       prev() {
-        if (this.musicList.length === 0) return 
+        if (this.musicList.length === 0) return
         this.nowPlayIndex === 0 ? this.$store.commit('setPlayIndex', this.musicList.length - 1) : this.$store.commit('setPlayIndex', --this.nowPlayIndex)
         this.getURL(this.musicList[this.nowPlayIndex].id)
       },

@@ -19,8 +19,6 @@
         <li  @click="activeNav(index)"  v-for="(item,index) in navs"
                :class="{active:currentIndex===index}">{{item}}
         </li>
-<!--        <li id="nav_one" class="active" @click="activeNav($event)">歌曲</li>-->
-<!--        <li id="nav_two" class="noactive" v-bind:class="{on:index=active}" @click="activeNav($event)">专辑</li>-->
     </div>
     <div class="albums">
       <div v-show="songVisible" class="hot-songs">
@@ -33,8 +31,7 @@
             <li
               v-for="(item, index) in hotSongsList.musicData"
               v-if="index < 10 || showAll"
-              @dblclick="$store.commit('setMusicList', hotSongsList),
-              $store.commit('setPlayIndex', index)"
+              @click="$store.commit('setMusic', item)"
             >
               <span class="index">
                 {{index + 1 > 9 ? index + 1 : `0${index + 1}`}}
@@ -59,7 +56,7 @@
       <div v-show="!songVisible">
         <ul class="albums">
          <li v-for="item in albumList">
-          <div class="album-logo">
+          <div class="album-logo" @click="showAlbumSongList(item.albumMid)">
             <img :src="item.albumImgUrl">
             <span class="albums-title" >{{item.name}}</span> &nbsp;&nbsp;&nbsp;
             <span class="publishtime">{{formatDate(item.time)}}</span>
@@ -190,8 +187,6 @@ export default {
         })
     },
     getSingerInfo(){
-        //歌曲列表
-        this.hotSongsList = {"musicData": []}
         let getParams = {
             params: {
                 id :this.$route.params.id,
@@ -211,22 +206,21 @@ export default {
             }
         });
     },
-    getSongList(){
+    getSongList(albumId){
         //歌曲列表
         this.hotSongsList = {"musicData": []}
         let getParams = {
             params: {
                 id :this.$route.params.id,
+                albumMid: albumId,
                 currentPage:this.songPage.page,
-                pageSize:this.songPage.size
+                pageSize:this.songPage.size,
             }
         }
         getSongList(getParams).then(res=>{
             if (res.code == 0) {
-
                 let data = JSON.parse(res.data);
                 let songList = JSON.parse(data.list);
-
                 songList.forEach(item => {
                     let obj = {
                         name: item.songName,
@@ -331,8 +325,12 @@ export default {
             }
         }
 
+    },
+    //显示专辑中的歌曲信息
+    showAlbumSongList(albumMid){
+
     }
-  },
+   },
   watch: {
     $route: {
       handler(to, from) {
