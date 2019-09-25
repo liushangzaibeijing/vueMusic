@@ -22,7 +22,7 @@ export const getSongList = params => axios.get(base+"/music/song/songList",param
 export const albumList = params => axios.get(base+"/music/album/albumList",params).then(res=>res.data).catch(err => {errmsg(err.response.status)});
 
 
-//获取专辑对应的歌曲信息
-export const songListByAlbum = params => axios.get(base+"/music/song/songListByAblum",params).then(res=>res.data).catch(err => {errmsg(err.response.status)});
+//获取单个专辑信息
+//export const getAlbumInfo = params => axios.get(base+"/music/album/getAlbumInfo",params).then(res=>res.data).catch(err => {errmsg(err.response.status)});
 
 

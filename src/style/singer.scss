@@ -177,10 +177,12 @@
           display: inline-block;
           width: 80rem;
           margin-left: 2rem;
-          cursor: default;
+          //cursor: pointer;
         }
         &:hover {
-          background-color: #ecedee;
+          background-color: #142e48;
+          color:#a82828;
+          cursor: pointer;
         }
       }
       li:nth-child(even) {

@@ -138,16 +138,16 @@ export default {
       return this.$store.state.showPlay
     },
     id() {
-      return this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex] && this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].id
+      return  this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].id
     },
     songName() {
-      return this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex] && this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].name
+      return this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].name
     },
     singer() {
-      return this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex] && this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].singer
+      return  this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].singer
     },
     singerId() {
-      return this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex] && this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].singerId
+      return  this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].singerId
     },
     pageList() {
       let arr = []
@@ -207,8 +207,10 @@ export default {
     }
   },
   watch: {
+    //watch  监听id()函数获取的值发生改变的时候
     id: {
       handler(newVal) {
+        alert(newVal)
         if (!newVal) return
         this.isLoading = true
         this.commentList = []

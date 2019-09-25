@@ -23,7 +23,7 @@
     <div class="albums">
       <div v-show="songVisible" class="hot-songs">
         <div class="album-logo">
-          <img src="http://on99ebnkk.bkt.clouddn.com/top50.png">
+          <img :src="albumUrl">
         </div>
         <div class="albums-content">
           <p class="albums-title">全部歌曲</p>
@@ -31,8 +31,7 @@
             <li
               v-for="(item, index) in hotSongsList.musicData"
               v-if="index < 10 || showAll"
-              @click="$store.commit('setMusic', item)"
-            >
+              @click="addPlayList(item)">
               <span class="index">
                 {{index + 1 > 9 ? index + 1 : `0${index + 1}`}}
               </span>
@@ -56,7 +55,7 @@
       <div v-show="!songVisible">
         <ul class="albums">
          <li v-for="item in albumList">
-          <div class="album-logo" @click="showAlbumSongList(item.albumMid)">
+          <div class="album-logo" @click="showAlbumSongList(item)">
             <img :src="item.albumImgUrl">
             <span class="albums-title" >{{item.name}}</span> &nbsp;&nbsp;&nbsp;
             <span class="publishtime">{{formatDate(item.time)}}</span>
@@ -89,6 +88,7 @@ import {
     getSongList,
 
 } from "../api/api";
+import storage from '../storage.js'
 export default {
   name: 'singer',
   data() {
@@ -119,6 +119,7 @@ export default {
       songVisible:true,
       navs:["歌曲","专辑"],
       currentIndex:0,
+      albumUrl:"http://on99ebnkk.bkt.clouddn.com/top50.png",
       songPage : {
           "total" : 100,
           "page" : 0,
@@ -148,7 +149,7 @@ export default {
   methods: {
     fetchData: function () {
         this.getSingerInfo();
-        this.getSongList();
+        this.getSongList(null);
     },
     getAlbumList(){
         let getParams = {
@@ -163,7 +164,6 @@ export default {
 
         albumList(getParams).then(res=>{
             if (res.code == 0) {
-                debugger
                 let  data =  JSON.parse(res.data);
                 let albumList = JSON.parse(data.list);
                 albumList.forEach(item => {
@@ -199,6 +199,7 @@ export default {
                 this.singerMid = singer.singerMid;
                 this.singerName = this.getSingerName(singer);
                 this.singerImgUrl = this.basePath+singer.picLocal;
+                this.albumUrl = this.singerImgUrl;
                 this.alias = this.getAliasName(singer);
                 this.musicSize = singer.musicSize;
                 this.albumSize = singer.albumSize;
@@ -206,13 +207,14 @@ export default {
             }
         });
     },
-    getSongList(albumId){
+    getSongList(albumMid){
         //歌曲列表
         this.hotSongsList = {"musicData": []}
+        let id  = this.$route.params.id;
         let getParams = {
             params: {
-                id :this.$route.params.id,
-                albumMid: albumId,
+                id :id,
+                albumMid: albumMid,
                 currentPage:this.songPage.page,
                 pageSize:this.songPage.size,
             }
@@ -327,9 +329,34 @@ export default {
 
     },
     //显示专辑中的歌曲信息
-    showAlbumSongList(albumMid){
+    showAlbumSongList(item){
+        this.getSongList(item.albumMid);
+        this.albumUrl= item.albumImgUrl;
+        this.songVisible = true;
+    },
+    addPlayList(song){
+        alert("添加歌曲到播放列表")
+        let musicData = storage.getMusic().musicData;
+        let index = this.indexPostion(musicData,song);
+        if(index==null){
+            this.$store.commit('setMusic', song)
+            this.$store.commit('setPlayIndex', musicData.length+1)
+        }else{
+            this.$store.commit('setPlayIndex', index)
+        }
 
-    }
+    },
+    indexPostion(musicData,playload){
+
+        for (let index = 0;index < musicData.length; index++) {
+            alert(musicData[index].songMid +" "+playload.songMid);
+
+            if (musicData[index].songMid == playload.songMid) {
+                return index;
+            }
+        }
+        return null;
+    },
    },
   watch: {
     $route: {

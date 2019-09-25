@@ -47,21 +47,10 @@ const store = new Vuex.Store({
 
     //设置音乐信息(单个) 添加的音乐不能与原有的列表重复
     setMusic: (state, playload) => {
-      if(this.contains(playload)==null){
-        state.musicList.musicData.push(playload);
-        storage.saveMusic(state.musicList);
-      }
-      let index = this.contains(playload)
-      state.nowPlayIndex = index;
+      state.musicList.musicData.push(playload);
+      storage.saveMusic(state.musicList);
     },
-    contains(playload){
-      state.musicList.musicData.forEach(function(item,index){
-        if( item.songMid == playload.songMid){
-          return index;
-        }
-      });
-      return null;
-    },
+
 
     play: state => {
       state.isPlaying = true
