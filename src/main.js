@@ -24,6 +24,7 @@ const store = new Vuex.Store({
     theme: 'red',
     //播放标识 控制播放组件是否显示播放状态
     isPlaying: false,
+    //当前播放列表中的播放索引
     nowPlayIndex: 0,
     showMiniAudio: true,
     //推荐歌单信息
@@ -35,6 +36,7 @@ const store = new Vuex.Store({
     showAbout: false,
     //显示登陆页面
     showLogin: false,
+    //每日推荐歌曲数据
     day: {'musicData': []},
   },
   //行为动作
@@ -51,27 +53,32 @@ const store = new Vuex.Store({
       storage.saveMusic(state.musicList);
     },
 
-
+    //设置播放
     play: state => {
       state.isPlaying = true
-
     },
+    //设置暂停状态
     pause: state => {
       state.isPlaying = false
     },
+    //清空播放列表
     clear: state => {
       state.musicList = {'musicData':[]}
       storage.saveMusic({'musicData':[]})
     },
+    //设置播放列表的当前播放索引
     setPlayIndex: (state, playload) => {
       state.nowPlayIndex = playload;
     },
+    //
     setShowMiniAudio: (state, playload) => {
       state.showMiniAudio = playload
     },
+    //设置评论列表
     setCommendList: (state, playload) => {
       state.commendList = playload
     },
+
     setCurTimeNum: (state, playload) => {
       state.curTimeNum = playload
     },

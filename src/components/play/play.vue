@@ -101,6 +101,9 @@
 <script>
 import vRotate from './rotate.vue'
 import vLyrics from './lyrics.vue'
+import {
+  getSongPlayInfo,
+} from "../../api/api"
 /**
  * A module that define play component
  * @exports vPlay
@@ -138,7 +141,7 @@ export default {
       return this.$store.state.showPlay
     },
     id() {
-      return  this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].id
+      return  this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].id;
     },
     songName() {
       return this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].name
@@ -179,6 +182,7 @@ export default {
       minutes = minutes > 9 ? minutes : `0${minutes}`
       return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日  ${hours}:${minutes}`
     },
+    //TODO 评论模块暂时不使用
     updateComment(index) {
       if (index < 1 || index > ~~(Math.ceil(this.commentTotal / 20))) return
       this.nowPageIndex = index
@@ -204,77 +208,85 @@ export default {
           this.commentList.push(obj)
         })
       })
+    },
+    //获取评论列表
+    selectComments(){
+      setTimeout(()=> {
+        this.axios.get(`http://localhost:3000/comment/music?id=${newVal}`)
+          .then(res => {
+            this.commentTotal = res.data.total
+            res.data.hotComments.slice(0, 10).forEach(item => {
+              let obj = {
+                userName: item.user && item.user.nickname,
+                likedCount: item.likedCount,
+                time: this.formatTime(item.time),
+                avatarUrl: item.user.avatarUrl,
+                content: item.content
+              }
+              if (item.beReplied.length > 0) {
+                obj.beReplied = true
+                obj.beRepliedUser = item.beReplied[0].user && item.beReplied[0].user.nickname
+                obj.beRepliedContent = item.beReplied[0].content
+              } else {
+                obj.beReplied = false
+              }
+              this.hotCommentList.push(obj)
+            })
+            res.data.comments.forEach(item => {
+              let obj = {
+                userName: item.user && item.user.nickname,
+                likedCount: item.likedCount,
+                time: this.formatTime(item.time),
+                avatarUrl: item.user.avatarUrl,
+                content: item.content
+              }
+              if (item.beReplied.length > 0) {
+                obj.beReplied = true
+                obj.beRepliedUser = item.beReplied[0].user && item.beReplied[0].user.nickname
+                obj.beRepliedContent = item.beReplied[0].content
+              } else {
+                obj.beReplied = false
+              }
+              this.commentList.push(obj)
+            })
+          })
+        setTimeout(() => this.isLoading = false, 1000)
+      }, 2000)
+    },
+
+    //获取歌曲的播放信息
+    getSongPlay(newVal){
+      let getParams = {
+        params: {
+          id :newVal,
+        }
+      }
+      getSongPlayInfo(getParams).then(res=>{
+          if (res.code == 0) {
+            let song = JSON.parse(res.data);
+            this.albumName = song.albumName
+            this.albumId = song.albumId;
+            if (song.nolyric === true) {
+              this.noLyric = true
+              return
+            }
+            this.noLyric = false
+            this.sendLyric = song.lyric;
+          }
+        })
     }
+
   },
   watch: {
     //watch  监听id()函数获取的值发生改变的时候
     id: {
       handler(newVal) {
-        alert(newVal)
         if (!newVal) return
         this.isLoading = true
         this.commentList = []
         this.hotCommentList = []
         this.nowPageIndex = 1
-        this.axios.get(`http://localhost:3000/song/detail?ids=${newVal}`)
-        .then(res => {
-          this.albumName = res.data.songs && res.data.songs[0].al.name
-          this.albumId = res.data.songs && res.data.songs[0].al.id
-        })
-        .then(() => {
-          this.axios.get(`http://localhost:3000/lyric?id=${newVal}`)
-          .then(res => {
-            if (res.data.nolyric === true) {
-              this.noLyric = true
-              return
-            }
-            this.noLyric = false
-            this.sendLyric = res.data.lrc.lyric
-          })
-        })
-        .then(() => {
-          setTimeout(()=> {
-            this.axios.get(`http://localhost:3000/comment/music?id=${newVal}`)
-            .then(res => {
-              this.commentTotal = res.data.total
-              res.data.hotComments.slice(0, 10).forEach(item => {
-                let obj = {
-                  userName: item.user && item.user.nickname,
-                  likedCount: item.likedCount,
-                  time: this.formatTime(item.time),
-                  avatarUrl: item.user.avatarUrl,
-                  content: item.content
-                }
-                if (item.beReplied.length > 0) {
-                  obj.beReplied = true
-                  obj.beRepliedUser = item.beReplied[0].user && item.beReplied[0].user.nickname
-                  obj.beRepliedContent = item.beReplied[0].content
-                } else {
-                  obj.beReplied = false
-                }
-                this.hotCommentList.push(obj)
-              })
-              res.data.comments.forEach(item => {
-                let obj = {
-                  userName: item.user && item.user.nickname,
-                  likedCount: item.likedCount,
-                  time: this.formatTime(item.time),
-                  avatarUrl: item.user.avatarUrl,
-                  content: item.content
-                }
-                if (item.beReplied.length > 0) {
-                  obj.beReplied = true
-                  obj.beRepliedUser = item.beReplied[0].user && item.beReplied[0].user.nickname
-                  obj.beRepliedContent = item.beReplied[0].content
-                } else {
-                  obj.beReplied = false
-                }
-                this.commentList.push(obj)
-              })
-            })
-            setTimeout(() => this.isLoading = false, 1000)
-          }, 2000)
-        })
+        this.getSongPlay(newVal);
       }
     }
   }

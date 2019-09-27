@@ -231,7 +231,8 @@ export default {
                         singerName: this.singerName,
                         singerId: this.singerId,
                         singerMid: this.singerMid,
-                        duration: item.duration
+                        duration: item.duration,
+                        songUrl:item.songUrl,
                     }
                     this.hotSongsList.musicData.push(obj)
                 })

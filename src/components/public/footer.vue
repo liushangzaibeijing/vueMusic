@@ -103,6 +103,8 @@ import storage from '../../storage.js'
     },
     data() {
       return {
+        //资源根路径
+        basePath:"http://127.0.0.1:8080",
         //播放地址
         url: '',
         //当前播放时间
@@ -124,22 +126,11 @@ import storage from '../../storage.js'
     created() {
       if (storage.getMusic() != null) {
         this.$store.commit('setMusicList', storage.getMusic())
-        if (this.musicList.length < 1) return
-        this.axios.get(`http://localhost:3000/music/url?id=${this.musicList[0].id}`)
-          .then(response => {
-            this.url = response.data.data[0].url
-            this.$store.commit('setPlayIndex', 0)
-          })
-      } else {
-        this.$store.dispatch('getInitData')
-        .then(data => this.$store.commit('setMusicList', data))
-        .then(() => {
-          this.axios.get(`http://localhost:3000/music/url?id=${this.musicList[0].id}`)
-          .then(response => {
-            this.url = response.data.data[0].url
-            this.$store.commit('setPlayIndex', 0)
-          })
-        })
+        if (this.musicList.length < 1) {
+          return
+        }
+        this.url = this.basePath+this.musicList[0].songUrl;
+        this.$store.commit('setPlayIndex', 0)
       }
     },
     mounted() {

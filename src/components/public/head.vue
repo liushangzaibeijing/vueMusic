@@ -205,7 +205,9 @@ export default {
     //搜索功能
     searchHandler(keywords) {
       keywords = keywords.trim()
-      if (keywords === '') return alert('输入关键词搜索')
+      if (keywords === '') {
+        return alert('输入关键词搜索')
+      }
       this.$router.push({name: 'search', params: {keywords: keywords}})
       this.$store.commit('setShowPlay', false)
     }

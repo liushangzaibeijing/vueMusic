@@ -18,18 +18,17 @@
           <li><i class="fa fa-ravelry fa-fw"></i>我的电台</li>
         </ul>
       <div class="sidebar-head"
-        @click="isToggleCreateList = !isToggleCreateList"
-      >创建的歌单<i class="fa"
-                  :class="isToggleCreateList ? 'fa-angle-right' : 'fa-angle-down'"></i></div>
+        @click="isToggleCreateList = !isToggleCreateList">创建的歌单
+           <i class="fa" :class="isToggleCreateList ? 'fa-angle-right' : 'fa-angle-down'"></i>
+      </div>
       <ul v-if="!isToggleCreateList">
         <li @click="$router.push({name: 'songList', params:{id: '169815571'}})"><i class="fa fa-heart-o fa-fw"></i>我喜欢的音乐</li>
         <li @click="$router.push({name: 'songList', params:{id: '471972418'}})"><i class="fa fa-file-audio-o fa-fw"></i>敲代码时听的歌</li>
-        <li @click="$router.push({name: 'songList', params:{id: '404264863'}})"><i class="fa fa-file-audio-o fa-fw"></i>1</li>
       </ul>
       <div class="sidebar-head"
-        @click="isToggleCollectList = !isToggleCollectList"
-      >收藏的歌单<i class="fa"
-                  :class="isToggleCollectList ? 'fa-angle-right' : 'fa-angle-down'"></i></div>
+        @click="isToggleCollectList = !isToggleCollectList">收藏的歌单
+        <i class="fa" :class="isToggleCollectList ? 'fa-angle-right' : 'fa-angle-down'"></i>
+      </div>
       <ul v-if="!isToggleCollectList">
         <li @click="$router.push({name: 'songList', params:{id: '327106241'}})"><i class="fa fa-file-audio-o fa-fw"></i>周傲娇哼喜欢的音乐</li>
         <li @click="$router.push({name: 'songList', params:{id: '699672611'}})"><i class="fa fa-file-audio-o fa-fw"></i>前端金曲</li>
