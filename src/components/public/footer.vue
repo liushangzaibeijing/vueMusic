@@ -114,7 +114,7 @@ import storage from '../../storage.js'
         curTimeNum: 0,
         tolTimeNum: 0,
         volume: 1,
-        width: 950,
+        width: 550,
         //timer: {},
         isVolumeOff: false,
         saveVolume: 1,
@@ -159,7 +159,7 @@ import storage from '../../storage.js'
         }
         this.showDialog = false
       }, false)
-      this.width = document.body.clientWidth < 1450 ? 750 : 950
+      this.width = document.body.clientWidth < 1450 ? 350 : 950
     },
     computed: {
       //播放模式
@@ -273,32 +273,32 @@ import storage from '../../storage.js'
         if (this.musicList.length === 0) return
         if (this.playStateIndex === 0) {
           this.nowPlayIndex === this.musicList.length - 1 ? this.$store.commit('setPlayIndex', 0) : this.$store.commit('setPlayIndex', ++this.nowPlayIndex)
-          this.getURL(this.musicList[this.nowPlayIndex].id)
+          this.url = this.basePath+this.musicList[this.nowPlayIndex].songUrl;
           return
         }
         if (this.playStateIndex === 1) {
           if (!flag) return this.$refs.audio.load()
           this.nowPlayIndex === this.musicList.length - 1 ? this.$store.commit('setPlayIndex', 0) : this.$store.commit('setPlayIndex', ++this.nowPlayIndex)
-          this.getURL(this.musicList[this.nowPlayIndex].id)
+            this.url = this.basePath+this.musicList[this.nowPlayIndex].songUrl;
         }
         if (this.playStateIndex === 2) {
           this.$store.commit('setPlayIndex', Math.floor(Math.random() * this.musicList.length))
-          this.getURL(this.musicList[this.nowPlayIndex].id)
-          return
+            this.url = this.basePath+this.musicList[this.nowPlayIndex].songUrl;
+            return
         }
         if (this.playStateIndex === 3) {
           if (this.nowPlayIndex === this.musicList.length - 1 && !flag) {
             return
           }
           this.nowPlayIndex === this.musicList.length - 1 ? this.$store.commit('setPlayIndex', 0) : this.$store.commit('setPlayIndex', ++this.nowPlayIndex)
-          this.getURL(this.musicList[this.nowPlayIndex].id)
+            this.url = this.basePath+this.musicList[this.nowPlayIndex].songUrl;
           return
         }
       },
       prev() {
         if (this.musicList.length === 0) return
         this.nowPlayIndex === 0 ? this.$store.commit('setPlayIndex', this.musicList.length - 1) : this.$store.commit('setPlayIndex', --this.nowPlayIndex)
-        this.getURL(this.musicList[this.nowPlayIndex].id)
+        this.url = this.basePath+this.musicList[this.nowPlayIndex].songUrl;
       },
       getURL(id) {
         this.axios.get(`http://localhost:3000/music/url?id=${id}`)
@@ -315,7 +315,7 @@ import storage from '../../storage.js'
       },
       changeMusic(index) {
         this.$store.commit('setPlayIndex', index)
-        this.getURL(this.musicList[this.nowPlayIndex].id)
+        this.url = this.basePath+this.musicList[this.nowPlayIndex].songUrl;
       }
     },
     watch: {
@@ -329,12 +329,12 @@ import storage from '../../storage.js'
           this.$store.commit('setCurTimeNum', newVal)
         }
       },
-      id: {
+        nowPlayIndex: {
         handler(newVal) {
           if(!newVal) return
-          this.getURL(newVal)
+          this.url = this.basePath+this.musicList[this.nowPlayIndex].songUrl;
         }
-      }
+      },
     }
   }
 </script>

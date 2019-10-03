@@ -3,8 +3,10 @@
   height: 73%;
   margin-top: 3rem;
   overflow: hidden;
-  font-size: 13px;
+  font-size: 16px;
+
   .lyrics {
+    color:#ffffff;
     transition: transform .5s;
   }
   p {
@@ -14,13 +16,13 @@
     }
   }
   .now {
-    color: #ededee;
+    color: #2e5a1d;
   }
   .no-lyric {
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translateX(-50%) translateY(-50%);
-    font-size: 14px;
+    font-size: 16px;
   }
 }

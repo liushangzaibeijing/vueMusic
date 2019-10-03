@@ -5,12 +5,21 @@ $netRed: #c62f2f;
   width: 100%;
   background-color: $netRed;
   line-height: 5rem;
-  > img {
-    height: 5rem;
-    width: 22rem;
-    vertical-align: middle;
-    cursor: pointer;
-  }
+  //> img {
+  //  height: 5rem;
+  //  width: 22rem;
+  //  vertical-align: middle;
+  //}
+    .image {
+      width: 5%;
+      height: 5rem;
+      vertical-align: middle;
+      cursor: pointer;
+    }
+    .text{
+      font-size: 48px;
+      color: white;
+    }
   label {
     display: inline-block;
     height: 2rem;
@@ -392,7 +401,7 @@ $netRed: #c62f2f;
             box-shadow: 0 0 5px #d89f55;
           }
         }
-      }     
+      }
     }
   }
 }
@@ -528,7 +537,7 @@ $netRed: #c62f2f;
         &:after {
           background-color: #5f5f63;
         }
-      }    
+      }
     }
   }
 }

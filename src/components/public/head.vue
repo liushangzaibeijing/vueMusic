@@ -4,7 +4,8 @@
 <template>
   <div class="music-head" :id="theme">
     <!-- 左侧图片 -->
-    <img src="http://on99ebnkk.bkt.clouddn.com/QQ%E5%9B%BE%E7%89%8720170413213632.png" @click="$store.commit('setShowPlay', false); $router.push({path: '/'})">
+    <img src="../../assets/logo.jpg" class="image"  @click="$store.commit('setShowPlay', false); $router.push({path: '/'})">
+    <span class="text">乌托邦</span>
     <!-- 居中侧搜索框  -->
     <label>
       <input type="text"

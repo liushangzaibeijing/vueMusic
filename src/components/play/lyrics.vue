@@ -1,6 +1,6 @@
 <template>
   <div class="lyrics-container" ref="lyc">
-    <div ref="lyrics" class="lyrics" v-if="!isNoLyric">
+    <div id = "lyrics" ref="lyrics" class="lyrics" v-if="!isNoLyric">
         <p v-for="(item, index) in lyricsArray" :class="index === nowLyricIndex ? 'now' : ''">
           {{item.txt}}
         </p>
@@ -17,6 +17,7 @@
  * @exports vLyrics
  * @author oyh(Reusjs)
  */
+import 'jquery'
 export default {
   name: 'vLyrics',
   props: {
@@ -53,9 +54,24 @@ export default {
       return this.noLyric
     },
     translateNum() {
-      if (this.nowLyricIndex <= 4) return 0
-      if (this.nowLyricIndex >= this.lyricsArray.length - 6) return (this.lyricsArray.length - 11) * (this.distance + 2)
-      return (this.nowLyricIndex - 4) * (this.distance + 2)
+      //最开始
+      let tranNum = 0
+      if (this.nowLyricIndex <= 4) {
+          tranNum = 0;
+          console.log(tranNum);
+          return tranNum;
+      }
+      //歌词结束
+      if (this.nowLyricIndex >= this.lyricsArray.length - 6) {
+          tranNum = (this.lyricsArray.length - 11) * (this.distance + 2);
+
+          console.log(tranNum);
+          return tranNum;
+      }
+      //歌词中间部分的显示
+      this.distance = this.distance+0.5;
+      tranNum = (this.nowLyricIndex - 4) * (this.distance + 2);
+      return tranNum;
     }
   },
   methods: {
@@ -67,7 +83,7 @@ export default {
           break
         }
       }
-      //this.nowLyricIndex > 4 ? this.animation((this.nowLyricIndex - 4) * (this.distance + 2)) : this.$refs.lyc.scrollTop = 0
+     //this.nowLyricIndex > 4 ? this.animation((this.nowLyricIndex - 4) * (this.distance + 2)) : this.$refs.lyc.scrollTop = 0
      this.$refs.lyrics.style.transform = `translateY(-${this.translateNum}px)`
     },
     /*scrollHandler() {
@@ -134,7 +150,7 @@ export default {
         })
         this.lyricsArray.push({min: 999, second: 999, ms: 999, totalTime: '99999999', txt: ''})
         //this.$refs.lyc.scrollTop = 0
-        //this.scrollDis = 0 
+        //this.scrollDis = 0
       }
     },
     curTimeNum: {

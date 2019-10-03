@@ -1,10 +1,10 @@
 <template>
   <div class="play-container" :class="isShow ? 'show' : 'hide'" :id="theme">
-    <div class="shadow" :style="{'background': `url(${imgUrl})`, 'background-size': 'cover'} ">
+    <div class="shadow" :style="{'background': `url(${this.imgUrl})`, 'background-size': 'cover'} ">
     </div>
     <div class="play-box">
       <div class="play-rotate">
-        <v-rotate @getImgUrl="getImgUrl"></v-rotate>
+        <v-rotate @getImgUrl="getImgUrl" :imgUrl="imgUrl"></v-rotate>
       </div>
       <div class="btn-box">
         <button @click="isLike = !isLike"><i class="fa fa-fw" :class="isLike ? 'fa-heart' : 'fa-heart-o'"></i>喜欢</button>
@@ -17,12 +17,13 @@
           <p class="song-name">{{songName}}<span @click="$store.commit('setShowPlay', false)"><i class="fa fa-compress"></i></span></p>
           <p class="song-detail">
             <span>专辑：&nbsp;<span class="album-name" @click="$router.push({name: 'album', params: {id: albumId}}); $store.commit('setShowPlay', false)">{{albumName}}</span></span>
-            <span>歌手：&nbsp;<span class="singer" @click="$router.push({name: 'singer', params: {id: singerId}}); $store.commit('setShowPlay', false)">{{singer}}</span></span>
+            <span>歌手：&nbsp;<span class="singer" @click="$router.push({name: 'singer', params: {id: singerId}}); $store.commit('setShowPlay', false)">{{singerName}}</span></span>
           </p>
         </div>
         <v-lyrics :sendLyric="sendLyric" :distance="30" :noLyric="noLyric"></v-lyrics>
       </div>
     </div>
+    <!--
     <div class="comment-container">
       <transition name="fade">
         <template v-if="!isLoading">
@@ -95,6 +96,7 @@
         </div>
       </transition>
     </div>
+    -->
   </div>
 </template>
 
@@ -117,7 +119,10 @@ export default {
   },
   data() {
     return {
-      imgUrl: '',
+      //资源根路径
+      basePath:"http://127.0.0.1:8080",
+      songBackimgUrl: 'http://127.0.0.1:8080/utopia/music/background/playBack.jpg',
+      imgUrl: 'http://127.0.0.1:8080/utopia/music/background/songBack.jpg',
       isLike: false,
       albumName: '',
       albumId: '',
@@ -140,14 +145,17 @@ export default {
     isShow() {
       return this.$store.state.showPlay
     },
-    id() {
-      return  this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].id;
+    nowPlayIndex() {
+        return this.$store.state.nowPlayIndex
+    },
+    isPlaying() {
+        return this.$store.state.isPlaying
     },
     songName() {
       return this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].name
     },
-    singer() {
-      return  this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].singer
+    singerName() {
+      return  this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].singerName
     },
     singerId() {
       return  this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].singerId
@@ -171,6 +179,7 @@ export default {
     }
   },
   methods: {
+    //获取父节点的传递参数
     getImgUrl(value) {
       this.imgUrl = value
     },
@@ -258,7 +267,7 @@ export default {
     getSongPlay(newVal){
       let getParams = {
         params: {
-          id :newVal,
+          id :this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].id,
         }
       }
       getSongPlayInfo(getParams).then(res=>{
@@ -272,22 +281,31 @@ export default {
             }
             this.noLyric = false
             this.sendLyric = song.lyric;
+            if(song.singerUrl!=null){
+                this.imgUrl = this.basePath + song.singerUrl;
+            }
+            if(song.albumUrl!=null){
+                this.imgUrl = this.basePath + song.albumUrl;
+            }
+
+
           }
         })
-    }
+    },
 
   },
   watch: {
-    //watch  监听id()函数获取的值发生改变的时候
-    id: {
+    //watch  监听播放索引改变的时候
+     nowPlayIndex: {
       handler(newVal) {
         if (!newVal) return
         this.isLoading = true
         this.commentList = []
         this.hotCommentList = []
-        this.nowPageIndex = 1
+        //this.nowPageIndex = 1
         this.getSongPlay(newVal);
-      }
+      },
+      immediate: true
     }
   }
 }

@@ -16,7 +16,7 @@
     </ul>
 
     <div class="pagetation_info clearfix" style="margin: 0 auto;">
-      <ul class="pagetation_box">
+      <ul id="page" class="pagetation_box">
                <li class="firstPage" @click=" page.page = 0 "><a href="javascript:;">首页</a></li>
                <li class="prev" v-show=" page.page > 0 " @click=" page.page-- "><a href="javascript:;">&lt;</a></li>
                <li v-for="d in page.showPageNum*2" @click=" page.page = d+page.minPage " :class=" page.page ==d+page.minPage? 'active' : '' "><a href="javascript:;">{{d+page.minPage}}</a></li>

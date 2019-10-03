@@ -19,21 +19,24 @@
  */
 export default {
   name: 'vRotate',
+  props: {
+    imgUrl: {
+        type: String,
+        default: ''
+    },
+  },
   data() {
     return {
       imgUrl: ''
     }
   },
   mounted() {
-    this.axios.get(`http://localhost:3000/song/detail?ids=${this.id}`)
-      .then(res => {
-        this.imgUrl = res.data.songs[0] && res.data.songs[0].al.picUrl
-      })
     this.$emit('getImgUrl', this.imgUrl)
   },
   computed: {
-    id() {
-      return this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex] && this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].id
+    nowPlayIndex() {
+      return this.$store.state.nowPlayIndex;
+      //this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex] && this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].id
     },
     isPlaying() {
       return this.$store.state.isPlaying
@@ -41,13 +44,9 @@ export default {
   },
   watch: {
     id: {
-      handler(newVal) {
+        nowPlayIndex(newVal) {
         if (!newVal) return
-        this.axios.get(`http://localhost:3000/song/detail?ids=${this.id}`)
-        .then(res => {
-          this.imgUrl = res.data.songs[0].al.picUrl
-          this.$emit('getImgUrl', this.imgUrl)
-        })
+        this.$emit('getImgUrl', this.imgUrl)
       }
     }
   }

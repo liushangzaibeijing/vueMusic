@@ -9,24 +9,25 @@
       </div>
       <div class="detail">
         <div class="edu">
-          <p><span class="right">姓名：</span>&nbsp;&nbsp;欧阳浩</p>
+          <p><span class="right">姓名：</span>&nbsp;&nbsp;谢奇秀</p>
           <p><span class="right">性别：</span>&nbsp;&nbsp;男</p>
           <p><span class="right">学历：</span>&nbsp;&nbsp;本科</p>
-          <p><span class="right">专业：</span>&nbsp;&nbsp;软件工程</p>
-          <p><span class="right">所在院校：</span>&nbsp;&nbsp;东华理工大学</p>
+          <p><span class="right">专业：</span>&nbsp;&nbsp;信息与计算科学</p>
+          <p><span class="right">所在院校：</span>&nbsp;&nbsp;山西农业大学</p>
           <p><span class="right">毕业时间：</span>&nbsp;&nbsp;2018年6月</p>
         </div>
         <div class="social">
-          <p><span class="right">QQ：</span>&nbsp;&nbsp;919917215</p>
-          <p><span class="right">Email：</span>&nbsp;&nbsp;reusserjs@gmail.com</p>
-          <p><span class="right">个人博客：</span>&nbsp;&nbsp;<a href="http://oyhfe.com" target="_blank">oyhfe.com</a></p>
+          <p><span class="right">QQ：</span>&nbsp;&nbsp;1374523006</p>
+          <p><span class="right">Email：</span>&nbsp;&nbsp;1374523006@163.com</p>
+          <p><span class="right">个人博客：</span>&nbsp;&nbsp;<a href="https://blog.csdn.net/liushangzaibeijing" target="_blank">oyhfe.com</a></p>
+<!--          <p><span class="right">github地址：</span>&nbsp;&nbsp;<a href="https://blog.csdn.net/liushangzaibeijing" target="_blank">oyhfe.com</a></p>-->
         </div>
       </div>
     </header>
     <div class="content">
       <p class="title">求职意向</p>
       <ul>
-        <li>前端开发</li>
+        <li>后端开发</li>
       </ul>
       <p class="title">技能清单</p>
       <ul class="skill">
@@ -54,7 +55,7 @@
             <li>项目地址：<a href="https://github.com/Reusjs/VueMusic-PC" target="_blank">https://github.com/Reusjs/VueMusic-PC</a></li>
             <li>预览地址：<a href="http://oyhfe.com/VueMusic" target="_blank">oyhfe.com/VueMusic</a></li>
           </ul>
-          
+
         </li>
         <li>完成了2016年百度前端学院前50个任务（共52个任务）
           <ol>
@@ -186,9 +187,9 @@ export default {
       flex-grow: 1;
       font-size: 13px;
       .right {
-        display:  inline-block; 
+        display:  inline-block;
         width:  70px;
-        text-align: right;  
+        text-align: right;
       }
       a {
         color: #e4e4e4;

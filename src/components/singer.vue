@@ -30,7 +30,6 @@
           <ul>
             <li
               v-for="(item, index) in hotSongsList.musicData"
-              v-if="index < 10 || showAll"
               @click="addPlayList(item)">
               <span class="index">
                 {{index + 1 > 9 ? index + 1 : `0${index + 1}`}}
@@ -40,17 +39,17 @@
               <span class="time">{{formatTime(~~ item.duration)}}</span>
             </li>
           </ul>
-          <div class="pagetation_info clearfix" style="margin: 0 auto;">
-            <ul class="pagetation_box">
-                     <li class="firstPage" @click=" songPage.page = 0 "><a href="javascript:;">首页</a></li>
+          <div class="pagetation_info clearfix" style="margin: 0 auto; border:none;">
+            <ul id="page" class="pagetation_box" style="border:none;">
+                     <li class="firstPage" @click="songPage.page = 0 "><a href="javascript:;">首页</a></li>
                          <li class="prev" v-show=" songPage.page > 0 " @click=" songPage.page-- "><a href="javascript:;">&lt;</a></li>
-                         <li v-for="d in songPage.showPageNum*2" @click=" songPage.page = d+songPage.minPage " :class=" songPage.page ==d+songPage.minPage? 'active' : '' "><a href="javascript:;">{{d+songPage.minPage}}</a></li>
+                         <li v-show="!songPage.pageSongShow" v-for="d in songPage.maxPage" @click=" songPage.page = d " :class=" songPage.page ==d? 'active' : '' "><a href="javascript:;">{{d}}</a></li>
+                         <li v-show="songPage.pageSongShow" v-for="d in songPage.showPageNum*2" @click=" songPage.page = d+songPage.minPage " :class=" songPage.page ==d+songPage.minPage? 'active' : '' "><a href="javascript:;">{{d+songPage.minPage}}</a></li>
                          <li class="next" v-show=" songPage.page < songPage.maxPage - 1 " @click=" songPage.page++ "><a href="javascript:;">&gt;</a></li>
                          <li class="lastPage" @click=" songPage.page = songPage.maxPage"><a href="javascript:;">尾页</a></li>
             </ul>
           </div>
         </div>
-
       </div>
       <div v-show="!songVisible">
         <ul class="albums">
@@ -63,10 +62,11 @@
         </li>
         </ul>
         <div class="pagetation_info clearfix" style="margin: 0 auto;">
-          <ul class="pagetation_box">
+          <ul id="pageAlbum" class="pagetation_box" style=" border:none;">
                    <li class="firstPage" @click=" albumPage.page = 0 "><a href="javascript:;">首页</a></li>
                        <li class="prev" v-show=" albumPage.page > 0 " @click=" albumPage.page-- "><a href="javascript:;">&lt;</a></li>
-                       <li v-for="d in albumPage.showPageNum*2" @click=" albumPage.page = d+albumPage.minPage " :class=" albumPage.page ==d+albumPage.minPage? 'active' : '' "><a href="javascript:;">{{d+albumPage.minPage}}</a></li>
+                       <li v-if="!albumPage.pageAlbumShow" v-for="d in albumPage.maxPage" @click=" albumPage.page = d" :class=" albumPage.page ==d? 'active' : '' "><a href="javascript:;">{{d}}</a></li>
+                       <li v-if="albumPage.pageAlbumShow" v-for="d in albumPage.showPageNum*2" @click=" albumPage.page = d+albumPage.minPage " :class=" albumPage.page ==d+albumPage.minPage? 'active' : '' "><a href="javascript:;">{{d+albumPage.minPage}}</a></li>
                        <li class="next" v-show=" albumPage.page < songPage.maxPage - 1 " @click=" songPage.page++ "><a href="javascript:;">&gt;</a></li>
                        <li class="lastPage" @click=" albumPage.page = albumPage.maxPage"><a href="javascript:;">尾页</a></li>
           </ul>
@@ -127,6 +127,7 @@ export default {
           "minPage":0,
           "size" : 25,
           "showPageNum":4,
+          "pageSongShow":true,
       },
       albumPage : {
           "total" : 100,
@@ -135,6 +136,7 @@ export default {
           "minPage":0,
           "size" : 20,
           "showPageNum":4,
+          "pageAlbumShow":true,
       },
     }
   },
@@ -305,7 +307,13 @@ export default {
     },
     //初始化页码信息
     initPage(type){
+        //歌曲分页
         if(type==1){
+            if(this.songPage.maxPage<this.songPage.showPageNum){
+                this.songPage.pageSongShow = false;
+                return;
+            }
+           //最小值小于0 则为第一页
           let min = this.songPage.page-this.songPage.showPageNum;
           this.songPage.minPage = min;
           if(min < 0){
@@ -315,8 +323,13 @@ export default {
           if(max>this.songPage.maxPage){
               this.songPage.minPage = this.songPage.maxPage-this.songPage.showPageNum*2;
           }
+          this.songPage.pageSongShow = true;
         }
         if(type==2){
+            if(this.albumPage.maxPage<this.albumPage.showPageNum){
+                this.albumPage.pageAlbumShow = false;
+                return;
+            }
             let min = this.albumPage.page-this.albumPage.showPageNum;
             this.albumPage.minPage = min;
             if(min < 0){
@@ -326,6 +339,7 @@ export default {
             if(max>this.albumPage.maxPage){
                 this.albumPage.minPage = this.albumPage.maxPage-this.albumPage.showPageNum*2;
             }
+            this.albumPage.pageAlbumShow = true;
         }
 
     },
@@ -336,9 +350,14 @@ export default {
         this.songVisible = true;
     },
     addPlayList(song){
-        alert("添加歌曲到播放列表")
-        let musicData = storage.getMusic().musicData;
-        let index = this.indexPostion(musicData,song);
+        let music = storage.getMusic();
+
+        let index = null;
+        if(music !=null){
+            let musicData = music.musicData;
+            index = this.indexPostion(musicData,song);
+        }
+
         if(index==null){
             this.$store.commit('setMusic', song)
             this.$store.commit('setPlayIndex', musicData.length+1)
@@ -350,8 +369,6 @@ export default {
     indexPostion(musicData,playload){
 
         for (let index = 0;index < musicData.length; index++) {
-            alert(musicData[index].songMid +" "+playload.songMid);
-
             if (musicData[index].songMid == playload.songMid) {
                 return index;
             }
@@ -382,4 +399,7 @@ export default {
 
 <style lang="scss" scoped>
 @import "../style/singer";
+</style>
+<style type="text/css">
+  @import "../style/css/page.css";
 </style>

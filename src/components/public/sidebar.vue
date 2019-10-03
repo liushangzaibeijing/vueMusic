@@ -49,7 +49,7 @@
             @click="isLike = !isLike"></i>
         </div>
         <div>
-          <span class="singer">{{singer}}</span><i class="fa fa-share-square-o"></i>
+          <span class="singer">{{singerName}}</span><i class="fa fa-share-square-o"></i>
         </div>
       </div>
     </div>
@@ -62,10 +62,15 @@
  * @exports v-sidebar
  * @author oyh(Reusjs)
  */
+import {
+    getSongPlayInfo,
+} from "../../api/api"
 export default {
   name: 'vSidebar',
   data() {
     return {
+      //资源根路径
+      basePath:"http://127.0.0.1:8080",
       isToggleCreateList: false,
       isToggleCollectList: false,
       imgUrl: '',
@@ -73,17 +78,17 @@ export default {
     }
   },
   mounted() {
-    this.axios.get(`http://localhost:3000/search?keywords=${this.songName}`)
-    .then(res => {
-      this.imgUrl = res.data.result && res.data.result.songs[0].album.blurPicUrl
-    })
+     this.getSongPlayInfo();
   },
   computed: {
-    songName() {
-      return this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex] ? this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].name : ''
+    id() {
+      return this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].id;
     },
-    singer() {
-      return this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex] ? this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].singer : ''
+    songName() {
+        return this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].name;
+    },
+    singerName() {
+      return this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].singerName;
     },
     showMiniAudio() {
       return this.$store.state.showMiniAudio
@@ -92,14 +97,38 @@ export default {
       return this.$store.state.theme
     }
   },
-  watch: {
-    songName: {
-      handler(newVal) {
-        if (!newVal) return
-        this.axios.get(`http://localhost:3000/search?keywords=${newVal}`)
-        .then(res => {
-          this.imgUrl = res.data.result.songs[0].album.blurPicUrl
+  methods:{
+    getSongPlayInfo(){
+        let getParams = {
+            params: {
+                id :this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].id,
+            }
+        }
+        getSongPlayInfo(getParams).then(res=>{
+            if (res.code == 0) {
+                let song = JSON.parse(res.data);
+                this.albumName = song.albumName
+                this.albumId = song.albumId;
+                if (song.nolyric === true) {
+                    this.noLyric = true
+                    return
+                }
+                this.noLyric = false
+                this.sendLyric = song.lyric;
+                if(song.singerUrl!=null){
+                    this.imgUrl = this.basePath + song.singerUrl;
+                }
+                if(song.albumUrl!=null){
+                    this.imgUrl = this.basePath + song.albumUrl;
+                }
+            }
         })
+    }
+  },
+  watch: {
+     id: {
+      handler(newVal) {
+          this.getSongPlayInfo();
       }
     }
   }
