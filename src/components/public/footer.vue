@@ -104,7 +104,8 @@ import storage from '../../storage.js'
     data() {
       return {
         //资源根路径
-        basePath:"http://127.0.0.1:8080",
+        //basePath:"http://127.0.0.1:8080",
+        basePath:"",
         //播放地址
         url: '',
         //当前播放时间
@@ -329,11 +330,11 @@ import storage from '../../storage.js'
           this.$store.commit('setCurTimeNum', newVal)
         }
       },
-        nowPlayIndex: {
-        handler(newVal) {
-          if(!newVal) return
-          this.url = this.basePath+this.musicList[this.nowPlayIndex].songUrl;
-        }
+      nowPlayIndex: {
+      handler(newVal) {
+        if(!newVal) return
+        this.url = this.basePath+this.musicList[this.nowPlayIndex].songUrl;
+      }
       },
     }
   }

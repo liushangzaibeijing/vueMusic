@@ -23,7 +23,29 @@
     <div class="albums">
       <div v-show="songVisible" class="hot-songs">
         <div class="album-logo">
-          <img :src="albumUrl">
+          <el-popover
+            placement="right"
+            width="300"
+            trigger="hover">
+              <div class="popup-data-detail">
+                <h3 class="popup-data-detail-tit">专辑简介</h3>
+                <p>那时雨后春前，你与我说，要去游园踏春，语气里怡悦而又满是憧憬。回来时，你膝盖青了一块，却告诉我，有了喜欢的人。</p>
+                <p>我倏地一惊，却也只能，应声听你描述那个人的好。</p><p>十几年竹马青梅的感情，好像也就从那时候开始，慢慢变得疏远起来。</p>
+                <p>后来，后来怎么样了呢。烽烟滚滚倾覆了无数的城池，你同那个人远走，而我迁离。</p><p>我不敢说，我在很后来的地方，见过你，也见过你的那个人，更见过，另一个旁边不是你的人。</p><p>我更不敢说，直到如今，我还在等。</p>
+             </div>
+              <img slot="reference" :src="albumUrl">
+          </el-popover>
+
+          <ul class="data-info">
+            <li class="data-info-item">流派：Pop 流行</li>
+            <li class="data-info-item">语种：国语</li>
+            <li class="data-info-item">流派：Pop 流行</li>
+            <li class="data-info-item">语种：国语</li>
+            <li class="data-info-item">流派：Pop 流行</li>
+            <li class="data-info-item">语种：国语</li>
+          </ul>
+
+
         </div>
         <div class="albums-content">
           <p class="albums-title">全部歌曲</p>
@@ -52,7 +74,7 @@
         </div>
       </div>
       <div v-show="!songVisible">
-        <ul class="albums">
+        <ul class="albums-list">
          <li v-for="item in albumList">
           <div class="album-logo" @click="showAlbumSongList(item)">
             <img :src="item.albumImgUrl">
@@ -94,7 +116,8 @@ export default {
   data() {
     return {
       //资源根路径
-      basePath:"http://127.0.0.1:8080",
+      // basePath:"http://127.0.0.1:8080",
+      basePath:"",
       //热门歌曲
       hotSongsList: {"musicData":[]},
       //专辑列表
@@ -188,6 +211,7 @@ export default {
             }
         })
     },
+    //获取歌手信息
     getSingerInfo(){
         let getParams = {
             params: {
@@ -209,6 +233,7 @@ export default {
             }
         });
     },
+    //获取歌曲信息
     getSongList(albumMid){
         //歌曲列表
         this.hotSongsList = {"musicData": []}
@@ -231,13 +256,14 @@ export default {
                         id: item.id,
                         songMid: item.songMid,
                         singerName: this.singerName,
-                        singerId: this.singerId,
-                        singerMid: this.singerMid,
+                        singerId: id,
+                        singerMid: item.singerMid,
                         duration: item.duration,
                         songUrl:item.songUrl,
                     }
                     this.hotSongsList.musicData.push(obj)
-                })
+                });
+                //console.log("热门歌曲信息：%s",JSON.stringify(this.hotSongsList.musicData))
                 //初始化页码
                 this.songPage.total = data.total;
                 this.songPage.maxPage = data.maxPage;
@@ -350,8 +376,10 @@ export default {
         this.songVisible = true;
     },
     addPlayList(song){
+        debugger
         let music = storage.getMusic();
 
+        console.log("添加歌曲信息:%s",JSON.stringify(song))
         let index = null;
         if(music !=null){
             let musicData = music.musicData;

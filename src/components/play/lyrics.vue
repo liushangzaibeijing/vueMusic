@@ -1,7 +1,7 @@
 <template>
   <div class="lyrics-container" ref="lyc">
     <div id = "lyrics" ref="lyrics" class="lyrics" v-if="!isNoLyric">
-        <p v-for="(item, index) in lyricsArray" :class="index === nowLyricIndex ? 'now' : ''">
+        <p :id="index" v-for="(item, index) in lyricsArray" :class="index === nowLyricIndex ? 'now' : ''">
           {{item.txt}}
         </p>
     </div>
@@ -53,26 +53,43 @@ export default {
     isNoLyric() {
       return this.noLyric
     },
-    translateNum() {
-      //最开始
-      let tranNum = 0
-      if (this.nowLyricIndex <= 4) {
-          tranNum = 0;
-          console.log(tranNum);
-          return tranNum;
-      }
-      //歌词结束
-      if (this.nowLyricIndex >= this.lyricsArray.length - 6) {
-          tranNum = (this.lyricsArray.length - 11) * (this.distance + 2);
+      translateNum: function () {
+          let tranNum = 0
+          //获取屏幕高度
+          let midHeight = document.body.clientHeight;
+          //获取当前播放歌词的p标签所在的高度
+          // let pDocA =  $("#"+this.nowLyricIndex).offset();
 
-          console.log(tranNum);
+
+          let pDocB =  document.getElementById(this.nowLyricIndex);
+
+          tranNum =  pDocB.offsetTop - 140;
+          console.log("向上移动距离：%s",tranNum);
+          console.log("坐标位置：%s", pDocB.offsetTop - 140);
           return tranNum;
+
+          //console.log("屏幕高度：%s,播放歌词坐标：%s",screenHeight,pDocA.top);
+
+          // var disTmp = this.distance;
+          // //最开始
+          //
+          // if (this.nowLyricIndex <= 4) {
+          //     tranNum = 0;
+          //     console.log("向上移动距离：%s",tranNum);
+          //     return tranNum;
+          // }
+          // //歌词结束
+          // if (this.nowLyricIndex >= this.lyricsArray.length - 6) {
+          //     tranNum = (this.lyricsArray.length - 11) * (this.distance + 2);
+          //     console.log("向上移动距离：%s",tranNum);
+          //     return tranNum;
+          // }
+          // //歌词中间部分的显示
+          // disTmp = disTmp + 0.5;
+          // tranNum = (this.nowLyricIndex - 4) * (disTmp + 2);
+          // console.log("向上移动距离：%s",tranNum);
+          // return tranNum;
       }
-      //歌词中间部分的显示
-      this.distance = this.distance+0.5;
-      tranNum = (this.nowLyricIndex - 4) * (this.distance + 2);
-      return tranNum;
-    }
   },
   methods: {
     showLyrics() {

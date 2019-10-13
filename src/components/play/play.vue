@@ -1,5 +1,5 @@
 <template>
-  <div class="play-container" :class="isShow ? 'show' : 'hide'" :id="theme">
+  <div class="play-container" :class="isShow ? 'show' : 'hide'" :id="theme" >
     <div class="shadow" :style="{'background': `url(${this.imgUrl})`, 'background-size': 'cover'} ">
     </div>
     <div class="play-box">
@@ -120,15 +120,18 @@ export default {
   data() {
     return {
       //资源根路径
-      basePath:"http://127.0.0.1:8080",
-      songBackimgUrl: 'http://127.0.0.1:8080/utopia/music/background/playBack.jpg',
-      imgUrl: 'http://127.0.0.1:8080/utopia/music/background/songBack.jpg',
+      basePath:"",
+      songBackimgUrl: '/utopia/music/background/playBack.jpg',
+      imgUrl: '/utopia/music/background/songBack.jpg',
+        // basePath:"http://127.0.0.1:8080",
+        // songBackimgUrl: 'http://127.0.0.1:8080/utopia/music/background/playBack.jpg',
+        // imgUrl: 'http://127.0.0.1:8080/utopia/music/background/songBack.jpg',
       isLike: false,
       albumName: '',
       albumId: '',
       sendLyric: '',
       noLyric: false,
-      isLoading: true,
+      isLoading: false,
       commentList: [],
       hotCommentList: [],
       commentTotal: 0,
@@ -176,7 +179,7 @@ export default {
     },
     theme() {
       return this.$store.state.theme
-    }
+    },
   },
   methods: {
     //获取父节点的传递参数
@@ -294,6 +297,9 @@ export default {
     },
 
   },
+  mounted() {
+    this.getSongPlay(0);
+  },
   watch: {
     //watch  监听播放索引改变的时候
      nowPlayIndex: {
@@ -304,8 +310,7 @@ export default {
         this.hotCommentList = []
         //this.nowPageIndex = 1
         this.getSongPlay(newVal);
-      },
-      immediate: true
+      }, immediate: true
     }
   }
 }

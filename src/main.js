@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import ElementUI from 'element-ui'
 import Vuex from 'vuex'
 import storage from './storage.js'
 
@@ -13,6 +14,8 @@ Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
 
 Vue.use(Vuex)
+Vue.use(ElementUI)
+
 
 //vue 的存储对象
 const store = new Vuex.Store({

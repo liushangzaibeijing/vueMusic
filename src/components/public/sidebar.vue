@@ -62,6 +62,7 @@
  * @exports v-sidebar
  * @author oyh(Reusjs)
  */
+
 import {
     getSongPlayInfo,
 } from "../../api/api"
@@ -70,7 +71,8 @@ export default {
   data() {
     return {
       //资源根路径
-      basePath:"http://127.0.0.1:8080",
+      //basePath:"http://127.0.0.1:8080",
+      basePath:"",
       isToggleCreateList: false,
       isToggleCollectList: false,
       imgUrl: '',
@@ -78,17 +80,19 @@ export default {
     }
   },
   mounted() {
+     //this.showStoreData();
      this.getSongPlayInfo();
+
   },
   computed: {
     id() {
-      return this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].id;
+      return this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex] ? this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].id:"";
     },
     songName() {
-        return this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].name;
+        return this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex] ? this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].name:"";
     },
     singerName() {
-      return this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].singerName;
+      return this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex] ? this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].singerName:"";
     },
     showMiniAudio() {
       return this.$store.state.showMiniAudio
@@ -99,10 +103,13 @@ export default {
   },
   methods:{
     getSongPlayInfo(){
+        if(this.$store.state.musicList.musicData.length == 0){
+            return null;
+        }
         let getParams = {
-            params: {
-                id :this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].id,
-            }
+          params: {
+              id :this.$store.state.musicList.musicData[this.$store.state.nowPlayIndex].id,
+          }
         }
         getSongPlayInfo(getParams).then(res=>{
             if (res.code == 0) {
@@ -123,8 +130,18 @@ export default {
                 }
             }
         })
-    }
-  },
+    },
+
+    showStoreData(){
+        //获取存储中的数据
+        this.$store.state.musicList.musicData.forEach(function(item,index){
+           // var id = item.id;
+            console.log("存储的音乐数据信息：%{}",JSON.toString(item))
+        })
+    } ,
+
+ },
+
   watch: {
      id: {
       handler(newVal) {
