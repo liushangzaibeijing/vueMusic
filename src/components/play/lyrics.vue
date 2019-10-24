@@ -17,7 +17,6 @@
  * @exports vLyrics
  * @author oyh(Reusjs)
  */
-import 'jquery'
 export default {
   name: 'vLyrics',
   props: {

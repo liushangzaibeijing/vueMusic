@@ -1,5 +1,6 @@
 .login-container {
   position: absolute;
+  width: 25%;
   top: 50%;
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
@@ -62,118 +63,92 @@
       margin: 10px 20px;
       i {
         font-size: 14px;
+        line-height: 1;
+        vertical-align: baseline;
       }
-      .login {
+      .register {
         display: inline-block;
         color: #40485b;
         font-size: 16px;
       }
-      .login-register {
+      .zhu {
         float: right;
         color: #e97b21;
         font-size: 16px;
-        cursor: pointer;
       }
     }
-
     .main-bot {
-      width: 320px;
-      margin: 20px 50px 30px;
-      .login-input {
-        width: 100%;
+      width: 50%;
+      margin: 20px 68px;
+      .check-ma {
         height: 40px;
-        margin-bottom: 20px;
+        border: 1px solid #DCE4E6;
+        padding-left: 0;
+        width: 100px;
+        float: right;
+      }
+      .field-inline {
+        width: 145%;
+        height: 40px;
+        margin-bottom: 10px;
+        p {
+          float: left;
+          font-size: 14px;
+          height: 0px;
+          line-height: 40px;
+        }
+        input {
+          float: right;
+        }
+      }
+      .main-input {
+        width: 248px;
+        height: 40px;
+        margin-bottom: 10px;
         outline: 0;
-        font-size: 14px;
+        font-size: 16px;
         color: #a1a1a2;
         text-indent: 1em;
         background-color: #f3f6f8;
         border: 1px solid #dce3e8;
       }
-      .button {
-        width: 15px;
-        height: 15px;
-        vertical-align: middle;
-      }
-      .image-code-div {
-        width: 320px;
-        height: 40px;
-        margin-bottom: 14px;
-        input {
-          width: 210px;
-          height: 40px;
-          outline: none;
-          font-size: 14px;
-          text-indent: 1em;
-          border-radius: 2px;
-          background: #F3F6F8;
-          border: 1px solid #dce3e8;
-        }
-        img {
-          width: 106px !important;
-          height: 40px;
-          border: 1px solid #DCE4E6;
-          padding-left: 0;
-          float: right;
-        }
-      }
-      .main-password {
-        height: 20px;
-        line-height: 20px;
-        margin-bottom: 10px;
-        .remMe {
-          vertical-align: middle;
-          cursor: pointer;
-          color: #7e8c8d;
-        }
-        .fog {
-          float: right;
-          cursor: pointer;
-        }
-      }
-      .login {
-        border: 0;
-        outline: 0;
-        width: 100%;
-        height: 40px;
-        color: #ffffff;
-        cursor: pointer;
-        font-size: 16px;
-        margin-bottom: 20px;
-        background-color: #c62f2f;
-      }
-      .other {
-        width: 100%;
-        height: 20px;
-        line-height: 20px;
-        margin-bottom: 20px;
-        hr {
-          width: 90px;
-          display: inline-block;
-          vertical-align: middle;
-        }
-        p {
-          width: 136px;
-          color: #9b9b9b;
-          text-align: center;
-          display: inline-block;
-        }
-      }
-      .last {
-        width: 100%;
-        img {
-          width: 42px;
-          height: 42px;
-          //margin: 0 12px;
-        }
-        a:first-child img {
-          margin-left: 0;
-        }
-        a:last-child img {
-          margin-right: 0;
-        }
-      }
+      .register-check-dev{
 
+      }
+      p {
+        float: left;
+        font-size: 14px;
+        height: 0px;
+        line-height: 40px;
+      }
+       input {
+        margin-left: 65px;
+        float: left;
+        width: 110px;
+        height: 40px;
+        padding-right: 7px;
+        border-radius: 2px;
+        border: 1px solid #dce3e8;
+        outline: none;
+        background: #F3F6F8;
+        padding-left: 26px;
+        line-height: 18px;
+        font-size: 16px;
+        .inputMa{
+           margin-left: 65px;
+        }
+      }
+      .register-btn {
+        width: 330px;
+        height: 40px;
+        margin-bottom: 20px;
+        outline: 0;
+        font-size: 16px !important;
+        background-color: #fe7300;
+        border: 0;
+        cursor: pointer;
+        color: #ffffff;
+      }
     }
   }
 }

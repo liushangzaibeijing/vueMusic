@@ -30,12 +30,6 @@
         <!-- 设置 -->
         <i class="fa fa-cog"></i>
       </div>
-<!--      <div class="tools">-->
-<!--        <i class="fa fa-external-link"></i>-->
-<!--        <i class="fa fa-minus"></i>-->
-<!--        <i class="fa fa-square-o"></i>-->
-<!--        <a href="http://oyhfe.com"><i class="fa fa-close"></i>aaa</a>-->
-<!--      </div>-->
       <!-- 登陆信息详情  -->
       <transition name="fade">
         <div
@@ -84,9 +78,9 @@
               <li><i class="fa fa-usb fa-fw"></i><span>导入歌单</span>
                 <span><span class="gt">&gt;</span></span>
               </li>
-              <!--<li v-if="user.isLogin" @click="signOut"><i class="fa fa-power-off fa-fw"></i><span>退出登录</span>
+              <li v-if="user.isLogin" @click="signOut"><i class="fa fa-power-off fa-fw"></i><span>退出登录</span>
                 <span><span class="gt">&gt;</span></span>
-              </li>-->
+              </li>
               <li @click="$store.commit('setShowAbout', true)"><i class="fa fa-sign-in fa-fw"></i><span>关于我</span>
                 <span><span class="gt">&gt;</span></span>
               </li>
@@ -135,6 +129,8 @@ export default {
     }
   },
   mounted() {
+    //获取从redis中获取用户信息 如果为空 则显示登陆页面
+
     if (storage.getUser() !== null) {
       this.user = storage.getUser()
     } else {
