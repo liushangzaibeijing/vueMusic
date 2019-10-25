@@ -1,4 +1,5 @@
 <template>
+
   <div class="login-container" v-if="showRegister">
     <div class="choose">
       <header>
@@ -55,7 +56,7 @@
           imageCode: '',
           registerSource: 'PC'
         },
-        showRegister:true
+        showRegister:false
       };
     },
     created () {
@@ -77,24 +78,8 @@
           that.imageCode = 'data:image/jpg;base64,' + res.result;
         });
       },
-      submit () {
-        let validateResult = this.formValidate();
-        // 验证成功
-        if (validateResult.status) {
-          this.register(() => {
-            this.$store.dispatch('new_notice', {
-              autoClose: true,
-              content: '注册成功, 请登录邮箱激活用户'
-            });
-            this.loadPage('login',null);
-          });
-        } else {
-          this.$store.dispatch('new_notice', {
-            autoClose: true,
-            content: validateResult.msg
-          });
-        }
-      },
+
+
       register (resolve) {
         this.$http({
           method: 'POST',
@@ -113,98 +98,15 @@
           console.log(err);
         });
       },
-      formValidate () {
-        let result = {
-          status: false,
-          msg: ''
-        };
-        // 验证用户名是否为空
-        if (!this.validate(this.registerForm.loginName, 'require')) {
-          result.msg = '用户名不能为空';
-          return result;
+      loadPage(routerName, param) {
+        debugger
+        if (param) {
+          this.$router.push({name: routerName, query: param});
+        } else {
+          this.$router.push({name: routerName});
         }
-
-        // 校验登录名是否存在
-//        this.checkCount((res) => {
-//          if (!res.result) {
-//            result.status = false;
-//            result.msg = '用户名已存在';
-//            return result;
-//          }
-//        }, this.registerForm.loginName, 'loginName');
-        // 验证邮箱
-        if (!this.validate(this.registerForm.email, 'require')) {
-          result.msg = '邮箱不能为空';
-          return result;
-        }
-
-        // 验证邮箱正则
-        if (!this.validate(this.registerForm.email, 'email')) {
-          result.msg = '邮箱格式不正确';
-          return result;
-        }
-
-        // 校验邮箱是否存在
-//        this.checkCount((res) => {
-//          if (!res.result) {
-//            result.status = false;
-//            result.msg = '邮箱已存在';
-//            return result;
-//          }
-//        }, this.registerForm.email, 'email');
-        // 验证 密码
-        if (!this.validate(this.registerForm.loginPwd, 'require')) {
-          result.msg = '密码不能为空';
-          return result;
-        }
-        // 验证 密码
-        if (!this.validate(this.registerForm.confirmPwd, 'require')) {
-          result.msg = '确认密码不能为空';
-          return result;
-        }
-        if (!this.validate(this.registerForm.loginPwd, 'pwd')) {
-          result.msg = '密码格式不正确';
-          return result;
-        }
-        if (!this.validate(this.registerForm.confirmPwd, 'pwd')) {
-          result.msg = '确认密码格式不正确';
-          return result;
-        }
-        // 验证两次输入的密码是否一致
-        if (this.registerForm.loginPwd !== this.registerForm.confirmPwd) {
-          result.msg = '两次输入的密码不一致';
-          return result;
-        }
-
-        if (!this.validate(this.registerForm.mobileNo, 'require')) {
-          result.msg = '手机号码不能为空';
-          return result;
-        }
-
-        // 验证手机号
-        if (!this.validate(this.registerForm.mobileNo, 'phone')) {
-          result.msg = '手机号格式不正确';
-          return result;
-        }
-
-//        this.checkCount((res) => {
-//          if (!res.result) {
-//            result.status = false;
-//            result.msg = '手机号码已存在';
-//            return result;
-//          }
-//        }, this.registerForm.mobileNo, 'mobileNo');
-
-        if (!this.validate(this.registerForm.imageCode, 'require')) {
-          result.msg = '验证码不能为空';
-          return result;
-        }
-
-        // 通过验证，返回正确提示
-        result.status = true;
-        result.msg = '验证通过';
-        return result;
       },
+
       checkCount(resolve, validValue, type) {
         this.ajax({
           url: `/uac/auth/checkValid`,

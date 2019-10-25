@@ -7,7 +7,6 @@
     <v-footer></v-footer>
     <about></about>
     <login></login>
-    <register></register>
   </div>
 </template>
 
@@ -22,7 +21,6 @@ import about from './components/about.vue'
 //新的登录页面
 import login from './components/auth/login.vue'
 
-import register from './components/auth/register.vue'
 
 export default {
   name: 'app',
@@ -34,7 +32,6 @@ export default {
     vPlay,    //播放页面
     about,    //关于
     login,     //登陆
-    register     //注册
   },
   computed: {
     isShowPlay() {
