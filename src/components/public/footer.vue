@@ -105,7 +105,7 @@ import storage from '../../storage.js'
       return {
         //资源根路径
         //basePath:"http://127.0.0.1:8080",
-        basePath:"",
+        basePath:"http://utopiaxiu.cn:8088",
         //播放地址
         url: '',
         //当前播放时间

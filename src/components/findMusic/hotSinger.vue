@@ -32,7 +32,7 @@
  * @exports hotSinger
  * @author oyh(Reusjs)
  */
-
+import headerMenu from "../assembly/headerMenu";
 import {
   hotSingerList,
 } from "../../api/api";
@@ -40,6 +40,7 @@ export default {
   name: 'hotSinger',
   data() {
     return {
+      basePath:"http://utopiaxiu.cn:8088",
       hotSingers: [],
       page : {
             "total" : 100,
@@ -70,7 +71,7 @@ export default {
                 let singerName =this.getSingerName(item);
 
             let obj = {
-              imgUrl: "http://127.0.0.1:8080"+item.picLocal,
+              imgUrl: this.basePath+item.picLocal,
               id: item.id,
               name: singerName
             }

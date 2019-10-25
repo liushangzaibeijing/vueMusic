@@ -1,6 +1,6 @@
 import axios from 'axios';
-//let base = '/utopia';
-const base = 'http://49.232.47.236:8035/utopia';
+let base = '/utopia';
+//const base = 'http://49.232.47.236:8035/utopia';
 import errmsg from './catchErr'
 
 //post请求测试

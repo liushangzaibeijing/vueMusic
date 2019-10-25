@@ -72,7 +72,7 @@ export default {
     return {
       //资源根路径
       //basePath:"http://127.0.0.1:8080",
-      basePath:"",
+      basePath:"http://utopiaxiu.cn:8088",
       isToggleCreateList: false,
       isToggleCollectList: false,
       imgUrl: '',

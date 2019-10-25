@@ -120,9 +120,9 @@ export default {
   data() {
     return {
       //资源根路径
-      basePath:"",
-      songBackimgUrl: '/utopia/music/background/playBack.jpg',
-      imgUrl: '/utopia/music/background/songBack.jpg',
+      basePath:"http://utopiaxiu.cn:8088",
+      songBackimgUrl: 'http://utopiaxiu.cn:8088/utopia/music/background/playBack.jpg',
+      imgUrl: 'http://utopiaxiu.cn:8088/utopia/music/background/songBack.jpg',
         // basePath:"http://127.0.0.1:8080",
         // songBackimgUrl: 'http://127.0.0.1:8080/utopia/music/background/playBack.jpg',
         // imgUrl: 'http://127.0.0.1:8080/utopia/music/background/songBack.jpg',

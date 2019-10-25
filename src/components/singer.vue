@@ -1,5 +1,12 @@
 <template>
   <div class="singer-container" :id="theme">
+    <ul class="menu-nav">
+      <li @click="$router.push({name: 'findMusic'})">个性推荐</li>
+      <li @click="$router.push({name: 'playList'})">歌单</li>
+      <li @click="$router.push({name: 'rank'})">排行榜</li>
+      <li class="active">歌手</li>
+      <li @click="$router.push({name: 'newSong'})">最新音乐</li>
+    </ul>
     <div class="singer-head">
       <div class="singer-img">
         <img :src="singerImgUrl">
@@ -117,7 +124,7 @@ export default {
     return {
       //资源根路径
       // basePath:"http://127.0.0.1:8080",
-      basePath:"",
+      basePath:"http://utopiaxiu.cn:8088",
       //热门歌曲
       hotSongsList: {"musicData":[]},
       //专辑列表

@@ -101,6 +101,29 @@
       background-color: #fdf8f8;
     }
   }
+  .menu-nav {
+    height: 4rem;
+    text-align: center;
+    line-height: 4rem;
+    border-bottom: 1px solid #e4e4e4;
+    li {
+      display: inline-block;
+      height: 95%;
+      width: 8rem;
+      margin-left: 1rem;
+      margin-right: 1rem;
+      vertical-align: middle;
+      cursor: pointer;
+      &:hover {
+        color: #c62f2f;
+      }
+    }
+    .active {
+      color: #c62f2f;
+      border-bottom: 3px solid #c62f2f;
+    }
+  }
+
   .albums {
     box-sizing: border-box;
     padding: 2rem 3rem;
