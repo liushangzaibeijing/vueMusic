@@ -16,7 +16,11 @@ import vFooter from './components/public/footer.vue'
 import vSidebar from './components/public/sidebar.vue'
 import vPlay from './components/play/play.vue'
 import about from './components/about.vue'
-import login from './components/login.vue'
+//旧的登录页面
+//import login from './components/login.vue'
+//新的登录页面
+import login from './components/auth/login.vue'
+
 
 export default {
   name: 'app',
@@ -27,7 +31,7 @@ export default {
     vSidebar, //测边框
     vPlay,    //播放页面
     about,    //关于
-    login     //登陆
+    login,     //登陆
   },
   computed: {
     isShowPlay() {

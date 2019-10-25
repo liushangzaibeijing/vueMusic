@@ -11,6 +11,10 @@ import hotSinger from '../components/findMusic/hotSinger.vue'
 import newSong from '../components/findMusic/newSong.vue'
 import day from '../components/day.vue'
 
+import login from '../components/auth/login.vue'
+
+import register from '../components/auth/register.vue'
+
 Vue.use(Router)
 
 export default new Router({
@@ -65,6 +69,16 @@ export default new Router({
       path: '/day',
       name: 'day',
       component: day
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: login
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: register
     },
   ]
 })

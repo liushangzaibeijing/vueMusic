@@ -38,7 +38,7 @@ const store = new Vuex.Store({
     //显示个人信息
     showAbout: false,
     //显示登陆页面
-    showLogin: false,
+    showLogin: true,
     //每日推荐歌曲数据
     day: {'musicData': []},
   },
