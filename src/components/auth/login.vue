@@ -31,7 +31,7 @@
             <a href="#"><img src="../../assets/login/git1.png" alt=""></a>
             <a href="#"><img src="../../assets/login/git2.png" alt=""></a>
             <a href="#"><img src="../../assets/login/git3.png" alt=""></a>
-            <a onclick="qqLogin"><img src="../../assets/login/git4.png" alt=""></a>
+            <a  href="#" @click="qqLogin()"><img src="../../assets/login/git4.png" alt=""></a>
             <a href="/auth/weixin"><img src="../../assets/login/git5.png" alt=""></a>
           </div>
         </div>
@@ -118,17 +118,21 @@
       {
         width = width || 600;
         height = height || 400;
-        var left = (window.screen.width - width) / 2;
-        var top = (window.screen.height - height) / 2;
-        window.open(url, "_blank", "toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, left="+left+", top="+top+", width="+width+", height="+height);
+        var left =0;
+        var top = (window.screen.height) / 5;
+        alert("top ："+top +" left ："+left);
+        window.open(url, "_parent ", "toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, left="+left+"px, top="+top+"px, width="+width+"px, height="+height+"px");
+
       },
 
-    qqLogin()
+
+     qqLogin()
       {
         var qqAppId = '101810237'; // 上面申请得到的appid
         var qqAuthPath = 'http://49.232.47.236:8035/utopia/login/logincallBack'; // 前面设置的回调地址
         var state = 'fjdslfjsdlkfd'; // 防止CSRF攻击的随机参数，必传，登录成功之后会回传，最好后台自己生成然后校验合法性
         this.openWindow(`https://graph.qq.com/oauth2.0/authorize?response_type=token&client_id=${qqAppId}&redirect_uri=${encodeURIComponent(qqAuthPath)}&state=${state}`);
+
       },
       doLogin () {
         let validateResult = this.loginFormValidate();

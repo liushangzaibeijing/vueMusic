@@ -55,14 +55,10 @@ export default {
       translateNum: function () {
           let tranNum = 0
           //获取屏幕高度
-          let midHeight = document.body.clientHeight;
-          //获取当前播放歌词的p标签所在的高度
-          // let pDocA =  $("#"+this.nowLyricIndex).offset();
-
-
           let pDocB =  document.getElementById(this.nowLyricIndex);
 
           tranNum =  pDocB.offsetTop - 140;
+
           console.log("向上移动距离：%s",tranNum);
           console.log("坐标位置：%s", pDocB.offsetTop - 140);
           return tranNum;

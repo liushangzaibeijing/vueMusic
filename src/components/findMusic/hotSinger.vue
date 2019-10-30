@@ -32,7 +32,6 @@
  * @exports hotSinger
  * @author oyh(Reusjs)
  */
-import headerMenu from "../assembly/headerMenu";
 import {
   hotSingerList,
 } from "../../api/api";
